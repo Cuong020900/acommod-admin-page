@@ -81,6 +81,14 @@ const navigationConfig = [
         navLink: "/app/admin/list-post"
       },
       {
+        id: "list-post",
+        title: "Danh sách bài viết 2",
+        type: "item",
+        icon: <Icon.Book size={12} />,
+        permissions: ["admin"],
+        navLink: "/app/admin/list-post-v2"
+      },
+      {
         id: "post-manage",
         title: "Chỉnh sửa bài viết",
         type: "item",

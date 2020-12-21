@@ -15,12 +15,18 @@ import {
   DropdownItem,
   DropdownToggle,
   Collapse,
-  Spinner
+  Spinner,
+  Button,
+  Modal,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
 } from "reactstrap"
 import axios from "axios"
 import { ContextLayout } from "../../../../utility/context/Layout"
 import { AgGridReact } from "ag-grid-react"
 import {
+  Eye,
   Edit,
   Trash2,
   ChevronDown,
@@ -36,6 +42,7 @@ import "../../../../assets/scss/plugins/tables/_agGridStyleOverride.scss"
 import "../../../../assets/scss/pages/users.scss"
 class UsersList extends React.Component {
   state = {
+    modal: false,
     rowData: null,
     pageSize: 20,
     isVisible: true,
@@ -78,16 +85,10 @@ class UsersList extends React.Component {
                 height="30"
                 width="30"
               />
-              <span>{params.data.name}</span>
+              <span>{params.data.username}</span>
             </div>
           )
         }
-      },
-      {
-        headerName: "Email",
-        field: "email",
-        filter: true,
-        width: 250
       },
       {
         headerName: "Name",
@@ -96,10 +97,22 @@ class UsersList extends React.Component {
         width: 200
       },
       {
-        headerName: "Country",
-        field: "country",
+        headerName: "Address",
+        field: "address",
         filter: true,
         width: 200
+      },
+      {
+        headerName: "Phone",
+        field: "phone",
+        filter: true,
+        width: 250
+      },
+      {
+        headerName: "Email",
+        field: "email",
+        filter: true,
+        width: 250
       },
       {
         headerName: "Role",
@@ -142,28 +155,29 @@ class UsersList extends React.Component {
         }
       },
       {
-        headerName: "Department",
-        field: "department",
-        filter: true,
-        width: 160
-      },
-      {
         headerName: "Actions",
         field: "transactions",
         width: 150,
         cellRendererFramework: params => {
           return (
             <div className="actions cursor-pointer">
+              <Eye
+                color="blue"
+                className="mr-50"
+                size={15}
+                onClick={() => history.push("/app/user/view")}
+              />
               <Edit
+                color="green"
                 className="mr-50"
                 size={15}
                 onClick={() => history.push("/app/user/edit")}
               />
               <Trash2
+                color="red"
                 size={15}
                 onClick={() => {
-                  let selectedData = this.gridApi.getSelectedRows()
-                  this.gridApi.updateRowData({ remove: selectedData })
+                  this.toggleModal()
                 }}
               />
             </div>
@@ -171,6 +185,12 @@ class UsersList extends React.Component {
         }
       }
     ]
+  }
+
+  toggleModal = () => {
+    this.setState(prevState => ({
+      modal: !prevState.modal
+    }))
   }
 
   async componentDidMount() {
@@ -253,6 +273,23 @@ class UsersList extends React.Component {
     const { rowData, columnDefs, defaultColDef, pageSize } = this.state
     return (
       <Row className="app-user-list">
+        <Modal
+          isOpen={this.state.modal}
+          toggle={this.toggleModal}
+          className="modal-dialog-centered"
+        >
+          <ModalHeader toggle={this.toggleModal}>
+            Bạn có chắc chắn muốn xóa?
+          </ModalHeader>
+          <ModalFooter>
+            <Button color="primary" onClick={this.toggleModal}>
+              Hủy
+          </Button>{" "}
+          <Button onClick={this.toggleModal}>
+              Xác nhận
+          </Button> { " " }
+          </ModalFooter>
+        </Modal>
         <Col sm="12">
           <Card
             className={classnames("card-action card-reload", {
@@ -379,35 +416,7 @@ class UsersList extends React.Component {
                       </Input>
                     </FormGroup>
                   </Col>
-                  <Col lg="3" md="6" sm="12">
-                    <FormGroup className="mb-0">
-                      <Label for="department">Department</Label>
-                      <Input
-                        type="select"
-                        name="department"
-                        id="department"
-                        value={this.state.department}
-                        onChange={e => {
-                          this.setState(
-                            {
-                              department: e.target.value
-                            },
-                            () =>
-                              this.filterData(
-                                "department",
-                                this.state.department.toLowerCase()
-                              )
-                          )
-                        }}
-                      >
-                        <option value="All">All</option>
-                        <option value="Sales">Sales</option>
-                        <option value="Development">Development</option>
-                        <option value="Management">Management</option>
-                      </Input>
-                    </FormGroup>
-                  </Col>
-                </Row>
+                  </Row>
               </CardBody>
             </Collapse>
           </Card>
