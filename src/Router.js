@@ -23,6 +23,7 @@ const userEdit = lazy(() => import("./views/pages/user/edit/Edit"))
 const userView = lazy(() => import("./views/pages/user/view/View"))
 const postManage = lazy(() => import("./views/pages/posts/PostManage"))
 const listPost = lazy(() => import("./views/pages/posts/ListPost"))
+const listPostV2 = lazy(() => import("./views/pages/data-list/ListView"))
 
 // Set Layout and Component Using App Route
 const RouteConfig = ({
@@ -98,6 +99,7 @@ class AppRouter extends React.Component {
           <AppRoute path="/app/user/view" component={userView} />
           <AppRoute path="/app/admin/post-manage/:id" component={postManage} />
           <AppRoute path="/app/admin/list-post" component={listPost} />
+          <AppRoute path="/app/admin/list-post-v2" component={listPostV2} />
         </Switch>
       </Router>
     )

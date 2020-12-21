@@ -1,4 +1,4 @@
-import React, { lazy } from "react"
+import React from "react"
 import { Card, CardHeader, CardTitle, CardBody, Table } from "reactstrap"
 import Breadcrumbs from "../../../components/@vuexy/breadCrumbs/BreadCrumb"
 import Avatar from "../../../components/@vuexy/avatar/AvatarComponent"
@@ -10,7 +10,6 @@ import {
 } from "react-feather"
 import { history } from "../../../history"
 
-const baseImgPath = "../../../assets/img/portrait/small/"
 class BasicUsage extends React.Component {
     constructor(props) {
         super(props);
