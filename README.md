@@ -1,4 +1,3 @@
-# acommod-admin-page
 # Trang quản lý cho admin Acommod
 # Cách cài đặt:
 - clone repo vào thư mục EasyAcommod
