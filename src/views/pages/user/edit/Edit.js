@@ -27,6 +27,7 @@ class UserEdit extends React.Component {
     })
   }
   render() {
+    console.log(this.props)
     return (
       <Row>
         <Col sm="12">

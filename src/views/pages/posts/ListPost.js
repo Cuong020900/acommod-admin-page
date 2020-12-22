@@ -15,8 +15,14 @@ import {
     DropdownItem,
     DropdownToggle,
     Collapse,
-    Spinner
+    Spinner,
+    Modal,
+    ModalHeader,
+    ModalBody,
+    ModalFooter,
+    Button
 } from "reactstrap"
+import Select from "react-select"
 import axios from "axios"
 import { ContextLayout } from "../../../utility/context/Layout"
 import { AgGridReact } from "ag-grid-react"
@@ -35,10 +41,23 @@ import { history } from "../../../history"
 import "../../../assets/scss/plugins/tables/_agGridStyleOverride.scss"
 import "../../../assets/scss/pages/users.scss"
 import avatarImg from "../../../assets/img/portrait/small/avatar-s-3.jpg"
+
+const statusOptions = [
+    { value: "actived", label: "actived" },
+    { value: "pending", label: "pending" },
+    { value: "deleted", label: "deleted" },
+]
 class UsersList extends React.Component {
     state = {
+        postChanged: {
+            id: null,
+            userId: null,
+            status: null
+        },
+        itemSelected: null,
+        modal: false,
         rowData: null,
-        pageSize: 20,
+        pageSize: 5,
         isVisible: true,
         reload: false,
         collapse: true,
@@ -91,6 +110,27 @@ class UsersList extends React.Component {
                 width: 600
             },
             {
+                headerName: "Status",
+                field: "status",
+                filter: true,
+                width: 150,
+                cellRendererFramework: params => {
+                    return params.value === "actived" ? (
+                        <div className="badge badge-pill badge-light-success">
+                            {params.value}
+                        </div>
+                    ) : params.value === "deleted" ? (
+                        <div className="badge badge-pill badge-light-danger">
+                            {params.value}
+                        </div>
+                    ) : params.value === "pending" ? (
+                        <div className="badge badge-pill badge-light-warning">
+                            {params.value}
+                        </div>
+                    ) : null
+                }
+            },
+            {
                 headerName: "Actions",
                 field: "transactions",
                 width: 150,
@@ -99,14 +139,10 @@ class UsersList extends React.Component {
                         <div className="actions cursor-pointer">
                             <Edit
                                 className="mr-50"
-                                size={15}
-                                onClick={() => history.push("/app/admin/post-manage/1")}
-                            />
-                            <Trash2
-                                size={15}
+                                size={20}
+                                color="green"
                                 onClick={() => {
-                                    let selectedData = this.gridApi.getSelectedRows()
-                                    this.gridApi.updateRowData({ remove: selectedData })
+                                    this.openModal(params.data)
                                 }}
                             />
                         </div>
@@ -116,11 +152,21 @@ class UsersList extends React.Component {
         ]
     }
 
-    async componentDidMount () {
+    async componentDidMount() {
         await axios.get("api/posts/getAll").then(response => {
             let rowData = response.data.items
             this.setState({ rowData })
         })
+    }
+
+    resetPostChanged = () => {
+        this.setState(prevState => ({ 
+            postChanged: {
+                id: null,
+                userId: null,
+                status: null
+            }
+        }))
     }
 
     onGridReady = params => {
@@ -172,6 +218,34 @@ class UsersList extends React.Component {
     toggleCollapse = () => {
         this.setState(state => ({ collapse: !state.collapse }))
     }
+
+    changePostStatus = (item) => {
+
+        // gui request change status
+
+        // reset form
+        this.resetPostChanged()
+        this.setState(prevState => ({
+            itemSelected: null,
+            modal: false
+        }))
+    }
+    openModal = (item) => {
+        this.setState(prevState => ({
+            itemSelected: item,
+            modal: true,
+            postChanged: {
+                id: item?.id ?? null,
+                userId: item?.user_id ?? null,
+                status: item.status
+            }
+        }))
+    }
+    closeModal = (item) => {
+        this.setState(prevState => ({
+            modal: false
+        }))
+    }
     onEntered = () => {
         this.setState({ status: "Opened" })
     }
@@ -192,10 +266,62 @@ class UsersList extends React.Component {
         this.setState({ isVisible: false })
     }
 
-    render () {
+    toggleModal = () => {
+        this.setState(prevState => ({
+            modal: !prevState.modal
+        }))
+    }
+
+    render() {
         const { rowData, columnDefs, defaultColDef, pageSize } = this.state
         return (
             <Row className="app-user-list">
+                <Modal
+                    isOpen={this.state.modal}
+                    toggle={this.toggleModal}
+                    className="modal-dialog-centered modal-lg"
+                >
+                    <ModalHeader toggle={this.toggleModal} className="bg-primary">
+                        Chỉnh sửa bài viết
+                    </ModalHeader>
+                    <ModalBody className="modal-dialog-centered">
+                        
+                    
+                    </ModalBody>
+                    <ModalBody className="modal-dialog-centered">
+                        <Card className="w-100">
+                            <CardBody>
+                            <h5 className="mb-1">Link bài viết:</h5>
+                            <a href={this.itemSelected?.link ?? '#'} target="_blank" className="mb-1">{ this.itemSelected?.title ?? "Không tìm thấy link"}</a>
+                            <hr />
+                            <Row>
+                                <Col md="6" sm="12">
+                                    <h5 className="mb-1">Trạng thái</h5>
+                                    <Select
+                                        className="React"
+                                        classNamePrefix="select"
+                                        defaultValue={statusOptions[0]}
+                                        name="color"
+                                        options={statusOptions}
+                                        onChange={e => {
+                                            this.setState(prevState => ({ 
+                                                postChanged: {
+                                                    status: e.value
+                                                }
+                                            }))
+                                        }}
+                                    />
+                                </Col>
+                            </Row>
+                            </CardBody>
+                        </Card>
+                    </ModalBody>
+                    <ModalFooter>
+                        <Button color="primary" onClick={this.changePostStatus}>
+                            Accept
+                        </Button>{" "}
+                    </ModalFooter>
+                </Modal>
                 <Col sm="12">
                     <Card
                         className={classnames("card-action card-reload", {
@@ -241,34 +367,6 @@ class UsersList extends React.Component {
                                 <Row>
                                     <Col lg="3" md="6" sm="12">
                                         <FormGroup className="mb-0">
-                                            <Label for="role">Role</Label>
-                                            <Input
-                                                type="select"
-                                                name="role"
-                                                id="role"
-                                                value={this.state.role}
-                                                onChange={e => {
-                                                    this.setState(
-                                                        {
-                                                            role: e.target.value
-                                                        },
-                                                        () =>
-                                                            this.filterData(
-                                                                "role",
-                                                                this.state.role.toLowerCase()
-                                                            )
-                                                    )
-                                                }}
-                                            >
-                                                <option value="All">All</option>
-                                                <option value="User">User</option>
-                                                <option value="Staff">Staff</option>
-                                                <option value="Admin">Admin</option>
-                                            </Input>
-                                        </FormGroup>
-                                    </Col>
-                                    <Col lg="3" md="6" sm="12">
-                                        <FormGroup className="mb-0">
                                             <Label for="status">Status</Label>
                                             <Input
                                                 type="select"
@@ -289,68 +387,13 @@ class UsersList extends React.Component {
                                                 }}
                                             >
                                                 <option value="All">All</option>
-                                                <option value="Active">Active</option>
-                                                <option value="Blocked">Blocked</option>
-                                                <option value="Deactivated">Deactivated</option>
+                                                <option value="Actived">Actived</option>
+                                                <option value="Pending">Pending</option>
+                                                <option value="Deleted">Deleted</option>
                                             </Input>
                                         </FormGroup>
                                     </Col>
-                                    <Col lg="3" md="6" sm="12">
-                                        <FormGroup className="mb-0">
-                                            <Label for="verified">Verified</Label>
-                                            <Input
-                                                type="select"
-                                                name="verified"
-                                                id="verified"
-                                                value={this.state.verified}
-                                                onChange={e => {
-                                                    this.setState(
-                                                        {
-                                                            verified: e.target.value
-                                                        },
-                                                        () =>
-                                                            this.filterData(
-                                                                "is_verified",
-                                                                this.state.verified.toLowerCase()
-                                                            )
-                                                    )
-                                                }}
-                                            >
-                                                <option value="All">All</option>
-                                                <option value="True">True</option>
-                                                <option value="False">False</option>
-                                            </Input>
-                                        </FormGroup>
-                                    </Col>
-                                    <Col lg="3" md="6" sm="12">
-                                        <FormGroup className="mb-0">
-                                            <Label for="department">Department</Label>
-                                            <Input
-                                                type="select"
-                                                name="department"
-                                                id="department"
-                                                value={this.state.department}
-                                                onChange={e => {
-                                                    this.setState(
-                                                        {
-                                                            department: e.target.value
-                                                        },
-                                                        () =>
-                                                            this.filterData(
-                                                                "department",
-                                                                this.state.department.toLowerCase()
-                                                            )
-                                                    )
-                                                }}
-                                            >
-                                                <option value="All">All</option>
-                                                <option value="Sales">Sales</option>
-                                                <option value="Development">Development</option>
-                                                <option value="Management">Management</option>
-                                            </Input>
-                                        </FormGroup>
-                                    </Col>
-                                </Row>
+                                    </Row>
                             </CardBody>
                         </Collapse>
                     </Card>
@@ -367,6 +410,18 @@ class UsersList extends React.Component {
                         <ChevronDown className="ml-50" size={15} />
                                             </DropdownToggle>
                                             <DropdownMenu right>
+                                            <DropdownItem
+                                                    tag="div"
+                                                    onClick={() => this.filterSize(5)}
+                                                >
+                                                    5
+                        </DropdownItem>
+                        <DropdownItem
+                                                    tag="div"
+                                                    onClick={() => this.filterSize(10)}
+                                                >
+                                                    10
+                        </DropdownItem>
                                                 <DropdownItem
                                                     tag="div"
                                                     onClick={() => this.filterSize(20)}
