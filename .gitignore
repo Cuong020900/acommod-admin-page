@@ -27,3 +27,6 @@ yarn-error.log*
 .prettierrc
 
 /react-shell-scripts
+
+# Local Netlify folder
+.netlify

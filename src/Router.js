@@ -97,12 +97,11 @@ class AppRouter extends React.Component {
               )
             }
           />
-          <AppRoute path="/app/user/list" component={userList} />
-          <AppRoute path="/app/user/edit" component={userEdit} />
-          <AppRoute path="/app/user/view" component={userView} />
-          <AppRoute path="/app/admin/post-manage/:id" component={postManage} />
+          <AppRoute path="/app/user/list" component={requireAuthentication(userList)} />
+          <AppRoute path="/app/user/edit" component={requireAuthentication(userEdit)} />
+          <AppRoute path="/app/user/view" component={requireAuthentication(userView)} />
+          <AppRoute path="/app/admin/post-manage/:id" component={requireAuthentication(postManage)} />
           <AppRoute path="/app/admin/list-post" component={requireAuthentication(listPost)} />
-          <AppRoute path="/app/admin/list-post-v2" component={listPostV2} />
         </Switch>
       </Router>
     )
