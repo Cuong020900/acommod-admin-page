@@ -5,6 +5,9 @@ import { connect } from "react-redux"
 import Spinner from "./components/@vuexy/spinner/Loading-spinner"
 import { ContextLayout } from "./utility/context/Layout"
 
+import requireAuthentication from "./HOC/auth"
+
+
 // Route-based code splitting
 const Home = lazy(() =>
   import("./views/pages/Home")
@@ -98,7 +101,7 @@ class AppRouter extends React.Component {
           <AppRoute path="/app/user/edit" component={userEdit} />
           <AppRoute path="/app/user/view" component={userView} />
           <AppRoute path="/app/admin/post-manage/:id" component={postManage} />
-          <AppRoute path="/app/admin/list-post" component={listPost} />
+          <AppRoute path="/app/admin/list-post" component={requireAuthentication(listPost)} />
           <AppRoute path="/app/admin/list-post-v2" component={listPostV2} />
         </Switch>
       </Router>

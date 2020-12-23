@@ -18,6 +18,9 @@ import googleSvg from "../../../../assets/img/svg/google.svg"
 import loginImg from "../../../../assets/img/pages/login.png"
 import "../../../../assets/scss/pages/authentication.scss"
 
+import { connect } from 'react-redux'
+
+import { changeRole } from '../../../../redux/actions/auth/userinfoActions'
 
 class Login extends React.Component {
   state = {
@@ -94,7 +97,10 @@ class Login extends React.Component {
                             <Button.Ripple color="primary" outline>
                              Register                           
                             </Button.Ripple>
-                            <Button.Ripple color="primary" type="submit" onClick={() => history.push("/")}>
+                            <Button.Ripple color="primary" type="submit" onClick={async () => { 
+                              await this.props.getData()
+                              this.props.history.push('/')
+                              }}>
                                 Login 
                             </Button.Ripple>
                           </div>
@@ -128,4 +134,16 @@ class Login extends React.Component {
     )
   }
 }
-export default Login
+
+const mapDispatchToProps = dispatch => {
+  return {
+    getData: () => dispatch(changeRole())
+  }
+}
+const mapStateToProps = (state, ownProps) => {
+  return {
+    name: state.auth.userInfo
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Login)

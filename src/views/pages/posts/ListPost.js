@@ -35,6 +35,7 @@ import { history } from "../../../history"
 import "../../../assets/scss/plugins/tables/_agGridStyleOverride.scss"
 import "../../../assets/scss/pages/users.scss"
 import avatarImg from "../../../assets/img/portrait/small/avatar-s-3.jpg"
+
 class UsersList extends React.Component {
     state = {
         rowData: null,
