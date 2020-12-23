@@ -76,7 +76,10 @@ class UsersList extends React.Component {
           return (
             <div
               className="d-flex align-items-center cursor-pointer"
-              onClick={() => history.push("/app/user/edit")}
+              onClick={() => history.push({
+                pathname: "/app/user/edit",
+                search: "?query=abc"
+              })}
             >
               <img
                 className="rounded-circle mr-50"
@@ -171,7 +174,12 @@ class UsersList extends React.Component {
                 color="green"
                 className="mr-50"
                 size={15}
-                onClick={() => history.push("/app/user/edit")}
+                onClick={() => history.push({
+                  pathname: "/app/user/edit",
+                  state: {
+                    id: 4
+                  }
+                })}
               />
               <Trash2
                 color="red"

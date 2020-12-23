@@ -17,14 +17,6 @@ const navigationConfig = [
     permissions: ["admin", "editor"],
     children: [
       {
-        id: "Dashboardx",
-        title: "Grid",
-        type: "item",
-        icon: <Icon.Circle size={12} />,
-        permissions: ["admin", "editor"],
-        navLink: "/dashboard"
-      },
-      {
         id: "userManager",
         title: "Quản lý người dùng",
         type: "item",
@@ -79,22 +71,6 @@ const navigationConfig = [
         icon: <Icon.Book size={12} />,
         permissions: ["admin"],
         navLink: "/app/admin/list-post"
-      },
-      {
-        id: "list-post",
-        title: "Danh sách bài viết 2",
-        type: "item",
-        icon: <Icon.Book size={12} />,
-        permissions: ["admin"],
-        navLink: "/app/admin/list-post-v2"
-      },
-      {
-        id: "post-manage",
-        title: "Chỉnh sửa bài viết",
-        type: "item",
-        icon: <Icon.Edit size={12} />,
-        permissions: ["admin"],
-        navLink: "/app/admin/post-manage"
       }
     ]
   },
