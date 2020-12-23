@@ -8,4 +8,5 @@ import "./apps/todo"
 import "./apps/calendar"
 import "./apps/userList"
 import "./apps/listPost"
+import "./statistics"
 mock.onAny().passThrough()
