@@ -23,6 +23,7 @@ import {
     Button
 } from "reactstrap"
 import Select from "react-select"
+import { Star } from "react-feather"
 import axios from "axios"
 import { ContextLayout } from "../../../utility/context/Layout"
 import { AgGridReact } from "ag-grid-react"
@@ -108,6 +109,33 @@ class UsersList extends React.Component {
                 field: "title",
                 filter: true,
                 width: 600
+            },
+            {
+                headerName: "Star",
+                field: "star",
+                filter: true,
+                width: 150,
+                cellRendererFramework: params => {
+                  return (<div>{params.value + " "}<Star size={20} className="text-warning" /></div>)
+                }
+            },
+            {
+                headerName: "Number of views",
+                field: "numberOfViews",
+                filter: true,
+                width: 150,
+                cellRendererFramework: params => {
+                    return(<div>{params.value + " views"}</div>)
+                }
+            },
+            {
+                headerName: "Number of Likes",
+                field: "numberOfLikes",
+                filter: true,
+                width: 150,
+                cellRendererFramework: params => {
+                    return(<div>{params.value + " likes"}</div>)
+                }
             },
             {
                 headerName: "Status",
@@ -231,6 +259,7 @@ class UsersList extends React.Component {
         }))
     }
     openModal = (item) => {
+        console.log(item)
         this.setState(prevState => ({
             itemSelected: item,
             modal: true,
@@ -292,7 +321,7 @@ class UsersList extends React.Component {
                         <Card className="w-100">
                             <CardBody>
                             <h5 className="mb-1">Link bài viết:</h5>
-                            <a href={this.itemSelected?.link ?? '#'} target="_blank" className="mb-1">{ this.itemSelected?.title ?? "Không tìm thấy link"}</a>
+                            <a href={this.state.itemSelected?.link ?? '#'} target="_blank" className="mb-1">{ this.state.itemSelected?.title ?? "Không tìm thấy link"}</a>
                             <hr />
                             <Row>
                                 <Col md="6" sm="12">
@@ -300,7 +329,11 @@ class UsersList extends React.Component {
                                     <Select
                                         className="React"
                                         classNamePrefix="select"
-                                        defaultValue={statusOptions[0]}
+                                        defaultValue={function a(){
+                                            let status = statusOptions.filter(e => e.value===this.state.itemSelected?.status)
+                                            console.log(status)
+                                            return status[0]
+                                        }.bind(this)()}
                                         name="color"
                                         options={statusOptions}
                                         onChange={e => {
@@ -313,6 +346,15 @@ class UsersList extends React.Component {
                                     />
                                 </Col>
                             </Row>
+                            <hr />
+                            <h5 className="mb-1">Star:</h5>
+                            <p> { this.state.itemSelected?.star ?? '0' } <Star size={20} className="text-warning" /> </p>
+                            <hr />
+                            <h5 className="mb-1">Số lượt xem:</h5>
+                            <p> { this.state.itemSelected?.numberOfViews ?? '0' } lượt xem </p>
+                            <hr />
+                            <h5 className="mb-1">Số lượt thích:</h5>
+                            <p> { this.state.itemSelected?.numberOfLikes ?? '0' } lượt thích </p>
                             </CardBody>
                         </Card>
                     </ModalBody>
