@@ -34,27 +34,11 @@ const navigationConfig = [
     children: [
       {
         id: "list",
-        title: "List",
+        title: "Danh sách user",
         type: "item",
         icon: <Icon.Circle size={12} />,
         permissions: ["admin", "editor"],
         navLink: "/app/user/list"
-      },
-      {
-        id: "view",
-        title: "View",
-        type: "item",
-        icon: <Icon.Circle size={12} />,
-        permissions: ["admin", "editor"],
-        navLink: "/app/user/view"
-      },
-      {
-        id: "edit",
-        title: "Edit",
-        type: "item",
-        icon: <Icon.Circle size={12} />,
-        permissions: ["admin", "editor"],
-        navLink: "/app/user/edit"
       }
     ]
   },
@@ -71,6 +55,22 @@ const navigationConfig = [
         icon: <Icon.Book size={12} />,
         permissions: ["admin"],
         navLink: "/app/admin/list-post"
+      },
+      {
+        id: "post-report",
+        title: "Báo cáo bài viết",
+        type: "item",
+        icon: <Icon.Book size={12} />,
+        permissions: ["admin"],
+        navLink: "/app/admin/post-report"
+      },
+      {
+        id: "request-extend",
+        title: "Yêu cầu gia hạn",
+        type: "item",
+        icon: <Icon.Book size={12} />,
+        permissions: ["admin"],
+        navLink: "/app/admin/request-extend"
       }
     ]
   },

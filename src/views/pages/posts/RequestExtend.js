@@ -28,7 +28,7 @@ import axios from "axios"
 import { ContextLayout } from "../../../utility/context/Layout"
 import { AgGridReact } from "ag-grid-react"
 import {
-    Edit,
+    Check,
     Trash2,
     ChevronDown,
     Clipboard,
@@ -43,14 +43,10 @@ import "../../../assets/scss/plugins/tables/_agGridStyleOverride.scss"
 import "../../../assets/scss/pages/users.scss"
 import avatarImg from "../../../assets/img/portrait/small/avatar-s-3.jpg"
 
-import { ToastContainer, toast } from 'react-toastify'
-
-import 'react-toastify/dist/ReactToastify.css'
-
 const statusOptions = [
-    { value: 1, label: "Chờ xử lý" },
-    { value: 2, label: "Không được duyệt" },
-    { value: 3, label: "Đã duyệt" },
+    { value: "actived", label: "actived" },
+    { value: "pending", label: "pending" },
+    { value: "deleted", label: "deleted" },
 ]
 class UsersList extends React.Component {
     state = {
@@ -62,7 +58,7 @@ class UsersList extends React.Component {
         itemSelected: null,
         modal: false,
         rowData: null,
-        pageSize: 10,
+        pageSize: 5,
         isVisible: true,
         reload: false,
         collapse: true,
@@ -78,6 +74,15 @@ class UsersList extends React.Component {
         columnDefs: [
             {
                 headerName: "ID",
+                field: "id",
+                width: 150,
+                filter: true,
+                checkboxSelection: true,
+                headerCheckboxSelectionFilteredOnly: true,
+                headerCheckboxSelection: true
+            },
+            {
+                headerName: "Post Id",
                 field: "postId",
                 width: 150,
                 filter: true,
@@ -86,8 +91,8 @@ class UsersList extends React.Component {
                 headerCheckboxSelection: true
             },
             {
-                headerName: "Chủ trọ",
-                field: "author",
+                headerName: "User Name",
+                field: "userId",
                 filter: true,
                 width: 250,
                 cellRendererFramework: params => {
@@ -103,74 +108,16 @@ class UsersList extends React.Component {
                                 height="30"
                                 width="30"
                             />
-                            <span>{(params.data.userName ?? " ") + "-" + params.data.fullNameOwner}</span>
+                            <span>{params.data.userName}</span>
                         </div>
                     )
                 }
             },
             {
-                headerName: "Thành phố",
-                field: "city",
-                width: 150,
-                filter: true
-            },
-            {
-                headerName: "Đã được thuê",
-                field: "hired",
-                width: 250,
-                filter: true
-            },
-            {
-                headerName: "Star",
-                field: "star",
+                headerName: "Giá",
+                field: "costOfExtend",
                 filter: true,
-                width: 150,
-                cellRendererFramework: params => {
-                    let min = 4.0,
-                    max = 5.0,
-                    star = Math.random() * (max - min) + min
-                    star = Number(star.toFixed(1))
-                    return (<div>{star + " "}<Star size={20} className="text-warning" /></div>)
-                }
-            },
-            {
-                headerName: "Số lượt xem bài",
-                field: "totalView",
-                filter: true,
-                width: 150,
-                cellRendererFramework: params => {
-                    return(<div>{params.value + " views"}</div>)
-                }
-            },
-            {
-                headerName: "Số lượt thích",
-                field: "totalLike",
-                filter: true,
-                width: 150,
-                cellRendererFramework: params => {
-                    return(<div>{params.value + " likes"}</div>)
-                }
-            },
-            {
-                headerName: "Trạng thái",
-                field: "postStatus",
-                filter: true,
-                width: 250,
-                cellRendererFramework: params => {
-                    return +params.value === 1 ? (
-                        <div className="badge badge-pill badge-light-warning">
-                            {"Chờ xử lý"}
-                        </div>
-                    ) : +params.value === 2 ? (
-                        <div className="badge badge-pill badge-light-danger">
-                            {"Không được duyệt"}
-                        </div>
-                    ) : +params.value === 3 ? (
-                        <div className="badge badge-pill badge-light-success">
-                            {"Đã duyệt"}
-                        </div>
-                    ) : null
-                }
+                width: 650
             },
             {
                 headerName: "Actions",
@@ -179,7 +126,15 @@ class UsersList extends React.Component {
                 cellRendererFramework: params => {
                     return (
                         <div className="actions cursor-pointer">
-                            <Edit
+                            <Check
+                                className="mr-50"
+                                size={20}
+                                color="green"
+                                onClick={() => {
+                                    // gui request xac nhan duyet
+                                }}
+                            />
+                            <Trash2
                                 className="mr-50"
                                 size={20}
                                 color="green"
@@ -195,15 +150,11 @@ class UsersList extends React.Component {
     }
 
     async componentDidMount() {
-        await axios.get("https://localhost:5000/api/Post/getallforowner").then(response => {
+        await axios.get("https://localhost:5000/api/RequestExtend/getrequest").then(response => {
             let rowData = response.data
             this.setState({ rowData })
         })
     }
-
-    notifyWarning = () => toast.warning("Lỗi!")
-
-    notifySuccess = () => toast.success("Success!")
 
     resetPostChanged = () => {
         this.setState(prevState => ({ 
@@ -265,21 +216,9 @@ class UsersList extends React.Component {
         this.setState(state => ({ collapse: !state.collapse }))
     }
 
-    changePostStatus = async () => {
+    changePostStatus = (item) => {
 
         // gui request change status
-        let path = `https://localhost:5000/api/Post/changestatus?postId=${this.state.itemSelected?.postId}&postStatusEnum=${this.state.postChanged?.status}`
-        let res = await axios.put(path)
-
-        if (res.status === 200) {
-            await axios.get("https://localhost:5000/api/Post/getallforowner").then(response => {
-                let rowData = response.data
-                this.setState({ rowData })
-            })
-            this.notifySuccess()
-        } else {
-            this.notifyWarning()
-        }
 
         // reset form
         this.resetPostChanged()
@@ -289,13 +228,14 @@ class UsersList extends React.Component {
         }))
     }
     openModal = (item) => {
+        console.log(item)
         this.setState(prevState => ({
             itemSelected: item,
             modal: true,
             postChanged: {
                 id: item?.id ?? null,
                 userId: item?.user_id ?? null,
-                status: item.postStatus
+                status: item.status
             }
         }))
     }
@@ -334,8 +274,6 @@ class UsersList extends React.Component {
         const { rowData, columnDefs, defaultColDef, pageSize } = this.state
         return (
             <Row className="app-user-list">
-                <ToastContainer />
-
                 <Modal
                     isOpen={this.state.modal}
                     toggle={this.toggleModal}
@@ -345,14 +283,10 @@ class UsersList extends React.Component {
                         Chỉnh sửa bài viết
                     </ModalHeader>
                     <ModalBody className="modal-dialog-centered">
-                        
-                    
-                    </ModalBody>
-                    <ModalBody className="modal-dialog-centered">
                         <Card className="w-100">
                             <CardBody>
                             <h5 className="mb-1">Link bài viết:</h5>
-                            <a href={"https://easy-accomod.netlify.app/product-detail/" + this.state.itemSelected?.postId} target="_blank" className="mb-1">{"Link tới bài viết"}</a>
+                            <a href={this.state.itemSelected?.link ?? '#'} target="_blank" className="mb-1">{ this.state.itemSelected?.title ?? "Không tìm thấy link"}</a>
                             <hr />
                             <Row>
                                 <Col md="6" sm="12">
@@ -361,7 +295,8 @@ class UsersList extends React.Component {
                                         className="React"
                                         classNamePrefix="select"
                                         defaultValue={function a(){
-                                            let status = statusOptions.filter(e => e.value===this.state.itemSelected?.postStatus)
+                                            let status = statusOptions.filter(e => e.value===this.state.itemSelected?.status)
+                                            console.log(status)
                                             return status[0]
                                         }.bind(this)()}
                                         name="color"
@@ -377,18 +312,20 @@ class UsersList extends React.Component {
                                 </Col>
                             </Row>
                             <hr />
+                            <h5 className="mb-1">Star:</h5>
+                            <p> { this.state.itemSelected?.star ?? '0' } <Star size={20} className="text-warning" /> </p>
                             <hr />
                             <h5 className="mb-1">Số lượt xem:</h5>
-                            <p> { this.state.itemSelected?.totalView ?? '0' } lượt xem </p>
+                            <p> { this.state.itemSelected?.numberOfViews ?? '0' } lượt xem </p>
                             <hr />
                             <h5 className="mb-1">Số lượt thích:</h5>
-                            <p> { this.state.itemSelected?.totalLike ?? '0' } lượt thích </p>
+                            <p> { this.state.itemSelected?.numberOfLikes ?? '0' } lượt thích </p>
                             </CardBody>
                         </Card>
                     </ModalBody>
                     <ModalFooter>
                         <Button color="primary" onClick={this.changePostStatus}>
-                            Lưu
+                            Accept
                         </Button>{" "}
                     </ModalFooter>
                 </Modal>
@@ -450,16 +387,16 @@ class UsersList extends React.Component {
                                                         },
                                                         () =>
                                                             this.filterData(
-                                                                "postStatus",
+                                                                "status",
                                                                 this.state.selectStatus.toLowerCase()
                                                             )
                                                     )
                                                 }}
                                             >
                                                 <option value="All">All</option>
-                                                <option value={1}>Chờ xử lý</option>
-                                                <option value={2}>Không được duyệt</option>
-                                                <option value={3}>Đã duyệt</option>
+                                                <option value="Actived">Actived</option>
+                                                <option value="Pending">Pending</option>
+                                                <option value="Deleted">Deleted</option>
                                             </Input>
                                         </FormGroup>
                                     </Col>

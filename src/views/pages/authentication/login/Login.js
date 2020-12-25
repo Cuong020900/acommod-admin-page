@@ -20,7 +20,13 @@ import "../../../../assets/scss/pages/authentication.scss"
 
 import { connect } from 'react-redux'
 
-import { changeRole } from '../../../../redux/actions/auth/userinfoActions'
+import axios from "axios"
+
+import { getUserInfo } from '../../../../redux/actions/auth/userinfoActions'
+
+import { ToastContainer, toast } from 'react-toastify'
+
+import 'react-toastify/dist/ReactToastify.css'
 
 class Login extends React.Component {
   state = {
@@ -28,6 +34,9 @@ class Login extends React.Component {
     email : "",
     password: ""
   }
+
+  notifyWarning = () => toast.warning("Sai tên đăng nhập hoặc mật khẩu!")
+
   toggle = tab => {
     if (this.state.activeTab !== tab) {
       this.setState({
@@ -35,9 +44,32 @@ class Login extends React.Component {
       })
     }
   }
+  login = async () => {
+    let dataSend = {
+      "userName": this.state.email,
+      "password": this.state.password
+    }
+    // let res = await axios.post("https://localhost:5000/api/User/login", dataSend)
+    const response = await fetch("https://localhost:5000/api/Login/login", {
+      method: 'POST', // *GET, POST, PUT, DELETE, etc.
+      headers: {
+        'Content-Type': 'application/json'
+        // 'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: JSON.stringify(dataSend) // body data type must match "Content-Type" header
+    });
+
+    if (response.status === 200) {
+      await this.props.getData()
+      history.push("/")
+    } else {
+      this.notifyWarning()
+    }
+  }
   render() {
     return (
       <Row className="m-0 justify-content-center">
+        <ToastContainer />
         <Col
           sm="8"
           xl="7"
@@ -61,8 +93,8 @@ class Login extends React.Component {
                         <Form onSubmit={e => e.preventDefault()}>
                           <FormGroup className="form-label-group position-relative has-icon-left">
                             <Input
-                              type="email"
-                              placeholder="Email"
+                              type="text"
+                              placeholder="Username"
                               value={this.state.email}
                               onChange={e => this.setState({ email: e.target.value })}
                             />
@@ -97,9 +129,8 @@ class Login extends React.Component {
                             <Button.Ripple color="primary" outline>
                              Register                           
                             </Button.Ripple>
-                            <Button.Ripple color="primary" type="submit" onClick={async () => { 
-                              await this.props.getData()
-                              this.props.history.push('/')
+                            <Button.Ripple color="primary" type="submit" onClick={() => { 
+                              this.login()
                               }}>
                                 Login 
                             </Button.Ripple>
@@ -137,7 +168,7 @@ class Login extends React.Component {
 
 const mapDispatchToProps = dispatch => {
   return {
-    getData: () => dispatch(changeRole())
+    getData: () => dispatch(getUserInfo())
   }
 }
 const mapStateToProps = (state, ownProps) => {

@@ -161,10 +161,6 @@ class VerticalLayout extends PureComponent {
     }
   }
 
-  componentWillUnmount() {
-    this.mounted = false
-  }
-
   handleCurrentLanguage = lang => {
     this.setState({
       currentLang: lang

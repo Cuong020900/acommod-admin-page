@@ -16,9 +16,31 @@ import AccountTab from "./Account"
 import InfoTab from "./Information"
 import SocialTab from "./Social"
 import "../../../../assets/scss/pages/users.scss"
+import { withRouter } from "react-router"
+import axios from "axios"
 class UserEdit extends React.Component {
-  state = {
-    activeTab: "1"
+  constructor(props){
+    super(props);
+    this.state = {
+      activeTab: "1",
+      user: null
+    }
+  }
+  async componentDidMount () {
+    const query = new URLSearchParams(this.props.location.search)
+
+    let userId = query.get('id')
+
+    if (userId === null) {
+      this.props.history.push("/")
+    } else {
+      // get user info 
+      await axios.get("api/users/list").then(async response => {
+        let user = response.data[0]
+        await this.setState({ user })
+        console.log(this.state)
+      })
+    }
   }
 
   toggle = tab => {
@@ -27,7 +49,6 @@ class UserEdit extends React.Component {
     })
   }
   render() {
-    console.log(this.props)
     return (
       <Row>
         <Col sm="12">
@@ -76,7 +97,7 @@ class UserEdit extends React.Component {
               </Nav>
               <TabContent activeTab={this.state.activeTab}>
                 <TabPane tabId="1">
-                  <AccountTab />
+                  <AccountTab {...this.state.user} />
                 </TabPane>
                 <TabPane tabId="2">
                   <InfoTab />
@@ -92,4 +113,4 @@ class UserEdit extends React.Component {
     )
   }
 }
-export default UserEdit
+export default withRouter(UserEdit)

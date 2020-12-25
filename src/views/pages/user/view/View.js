@@ -15,7 +15,30 @@ import { Link } from "react-router-dom"
 import Checkbox from "../../../../components/@vuexy/checkbox/CheckboxesVuexy"
 import userImg from "../../../../assets/img/portrait/small/avatar-s-18.jpg"
 import "../../../../assets/scss/pages/users.scss"
+import { withRouter } from "react-router"
+import axios from "axios"
 class UserView extends React.Component {
+  constructor(props){
+    super(props);
+    this.state = {
+      user: null
+    }
+  }
+  async componentDidMount () {
+    const query = new URLSearchParams(this.props.location.search)
+
+    let userId = query.get('id')
+
+    if (userId === null) {
+      this.props.history.push("/")
+    } else {
+      // get user info 
+      await axios.get("api/users/list").then(response => {
+        let user = response.data[0]
+        this.setState({ user })
+      })
+    }
+  }
   render() {
     return (
       <React.Fragment>
@@ -47,20 +70,20 @@ class UserView extends React.Component {
                                 <div className="user-info-title font-weight-bold">
                                   Username
                                 </div>
-                                <div>crystal</div>
+                                <div>{ this.state.user?.username }</div>
                               </div>
                               <div className="d-flex user-info">
                                 <div className="user-info-title font-weight-bold">
                                   Name
                                 </div>
-                                <div>Crystal Hamilton</div>
+                                <div>{ this.state.user?.name }</div>
                               </div>
                               <div className="d-flex user-info">
                                 <div className="user-info-title font-weight-bold">
                                   Email
                                 </div>
                                 <div className="text-truncate">
-                                  <span>crystalhamilton@gmail.com</span>
+                                  <span>{ this.state.user?.email }</span>
                                 </div>
                               </div>
                             </div>
@@ -71,13 +94,13 @@ class UserView extends React.Component {
                                 <div className="user-info-title font-weight-bold">
                                   Status
                                 </div>
-                                <div>active</div>
+                                <div>{ this.state.user?.status }</div>
                               </div>
                               <div className="d-flex user-info">
                                 <div className="user-info-title font-weight-bold">
                                   Role
                                 </div>
-                                <div>admin</div>
+                                <div>{ this.state.user?.role }</div>
                               </div>
                               <div className="d-flex user-info">
                                 <div className="user-info-title font-weight-bold">
@@ -95,7 +118,7 @@ class UserView extends React.Component {
                   </Col>
                   <Col className="mt-1 pl-0" sm="12">
                     <Button.Ripple className="mr-1" color="primary" outline>
-                      <Link to="/app/user/edit">
+                      <Link to={"/app/user/edit?id=" + this.state.user?.id}>
                         <Edit size={15} />
                         <span className="align-middle ml-50">Edit</span>
                       </Link>
@@ -223,155 +246,9 @@ class UserView extends React.Component {
               </CardBody>
             </Card>
           </Col>
-          <Col sm="12">
-            <Card>
-              <CardHeader className="border-bottom pb-1 mx-2 px-0">
-                <CardTitle>
-                  <Lock size={18} />
-                  <span className="align-middle ml-50">Permissions</span>
-                </CardTitle>
-              </CardHeader>
-              <CardBody>
-                {" "}
-                <Table className="permissions-table" borderless responsive>
-                  <thead>
-                    <tr>
-                      <th>Module</th>
-                      <th>Read</th>
-                      <th>Write</th>
-                      <th>Create</th>
-                      <th>Delete</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>Users</td>
-                      <td>
-                        <Checkbox
-                          disabled
-                          color="primary"
-                          icon={<Check className="vx-icon" size={16} />}
-                          label=""
-                          defaultChecked={true}
-                        />
-                      </td>
-                      <td>
-                        <Checkbox
-                          disabled
-                          color="primary"
-                          icon={<Check className="vx-icon" size={16} />}
-                          label=""
-                          defaultChecked={false}
-                        />
-                      </td>
-                      <td>
-                        <Checkbox
-                          disabled
-                          color="primary"
-                          icon={<Check className="vx-icon" size={16} />}
-                          label=""
-                          defaultChecked={false}
-                        />
-                      </td>
-                      <td>
-                        {" "}
-                        <Checkbox
-                          disabled
-                          color="primary"
-                          icon={<Check className="vx-icon" size={16} />}
-                          label=""
-                          defaultChecked={true}
-                        />
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>Articles</td>
-                      <td>
-                        <Checkbox
-                          disabled
-                          color="primary"
-                          icon={<Check className="vx-icon" size={16} />}
-                          label=""
-                          defaultChecked={false}
-                        />
-                      </td>
-                      <td>
-                        <Checkbox
-                          disabled
-                          color="primary"
-                          icon={<Check className="vx-icon" size={16} />}
-                          label=""
-                          defaultChecked={true}
-                        />
-                      </td>
-                      <td>
-                        <Checkbox
-                          disabled
-                          color="primary"
-                          icon={<Check className="vx-icon" size={16} />}
-                          label=""
-                          defaultChecked={false}
-                        />
-                      </td>
-                      <td>
-                        {" "}
-                        <Checkbox
-                          disabled
-                          color="primary"
-                          icon={<Check className="vx-icon" size={16} />}
-                          label=""
-                          defaultChecked={true}
-                        />
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>Staff</td>
-                      <td>
-                        <Checkbox
-                          disabled
-                          color="primary"
-                          icon={<Check className="vx-icon" size={16} />}
-                          label=""
-                          defaultChecked={true}
-                        />
-                      </td>
-                      <td>
-                        <Checkbox
-                          disabled
-                          color="primary"
-                          icon={<Check className="vx-icon" size={16} />}
-                          label=""
-                          defaultChecked={true}
-                        />
-                      </td>
-                      <td>
-                        <Checkbox
-                          disabled
-                          color="primary"
-                          icon={<Check className="vx-icon" size={16} />}
-                          label=""
-                          defaultChecked={false}
-                        />
-                      </td>
-                      <td>
-                        {" "}
-                        <Checkbox
-                          disabled
-                          color="primary"
-                          icon={<Check className="vx-icon" size={16} />}
-                          label=""
-                          defaultChecked={false}
-                        />
-                      </td>
-                    </tr>
-                  </tbody>
-                </Table>
-              </CardBody>
-            </Card>
-          </Col>
         </Row>
       </React.Fragment>
     )
   }
 }
-export default UserView
+export default withRouter(UserView)

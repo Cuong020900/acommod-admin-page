@@ -1,9 +1,8 @@
 import React from "react"
-import { Card, CardHeader, CardTitle, CardBody } from "reactstrap"
+import { Card, CardHeader, CardTitle, CardBody, Row, Col } from "reactstrap"
 import Chart from "react-apexcharts"
 import axios from "axios"
-
-
+import SalesCard from "./analytics/SalesCard"
 class Home extends React.Component {
   state = {
     options: {
@@ -69,7 +68,17 @@ class Home extends React.Component {
 
   render() {
     return (
-      <Card>
+      <React.Fragment>
+        <Row className="match-height">
+          <Col lg="6" md="12">
+            <SalesCard />
+          </Col>
+          <Col lg="3" md="6" sm="12">
+          </Col>
+          <Col lg="3" md="6" sm="12">
+          </Col>
+        </Row>
+        <Card>
         <CardHeader>
           <CardTitle>Line Chart</CardTitle>
         </CardHeader>
@@ -88,6 +97,8 @@ class Home extends React.Component {
           />
         </CardBody>
       </Card>
+      </React.Fragment>
+      
     )
   }
 }

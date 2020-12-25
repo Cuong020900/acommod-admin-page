@@ -11,8 +11,6 @@ import {
   Table
 } from "reactstrap"
 import userImg from "../../../../assets/img/portrait/small/avatar-s-18.jpg"
-import Checkbox from "../../../../components/@vuexy/checkbox/CheckboxesVuexy"
-import { Check, Lock } from "react-feather"
 class UserAccountTab extends React.Component {
   render() {
     return (
@@ -31,7 +29,7 @@ class UserAccountTab extends React.Component {
             </Media>
             <Media className="mt-2" body>
               <Media className="font-medium-1 text-bold-600" tag="p" heading>
-                Crystal Hamilton
+                { this.props?.name }
               </Media>
               <div className="d-flex flex-wrap">
                 <Button.Ripple className="mr-1" color="primary" outline>
@@ -50,7 +48,7 @@ class UserAccountTab extends React.Component {
                   <Label for="username">Username</Label>
                   <Input
                     type="text"
-                    defaultValue="crystal"
+                    defaultValue={this.props?.username}
                     id="username"
                     placeholder="Username"
                   />
@@ -72,7 +70,7 @@ class UserAccountTab extends React.Component {
                   <Label for="name">Name</Label>
                   <Input
                     type="text"
-                    defaultValue="Crystal Hamilton"
+                    defaultValue={this.props?.name}
                     id="name"
                     placeholder="Name"
                   />
@@ -92,7 +90,7 @@ class UserAccountTab extends React.Component {
                   <Label for="email">Email</Label>
                   <Input
                     type="text"
-                    defaultValue="crystalhamilton@gmail.com"
+                    defaultValue={this.props?.email}
                     id="email"
                     placeholder="Email"
                   />
@@ -108,138 +106,6 @@ class UserAccountTab extends React.Component {
                     placeholder="company"
                   />
                 </FormGroup>
-              </Col>
-              <Col sm="12">
-                <div className="permissions border px-2">
-                  <div className="title pt-2 pb-0">
-                    <Lock size={19} />
-                    <span className="text-bold-500 font-medium-2 ml-50">
-                      Permissions
-                    </span>
-                    <hr />
-                  </div>
-                  <Table borderless responsive>
-                    <thead>
-                      <tr>
-                        <th>Module Permission</th>
-                        <th>Read</th>
-                        <th>Write</th>
-                        <th>Create</th>
-                        <th>Delete</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td>Users</td>
-                        <td>
-                          <Checkbox
-                            color="primary"
-                            icon={<Check className="vx-icon" size={16} />}
-                            label=""
-                            defaultChecked={true}
-                          />
-                        </td>
-                        <td>
-                          <Checkbox
-                            color="primary"
-                            icon={<Check className="vx-icon" size={16} />}
-                            label=""
-                            defaultChecked={false}
-                          />
-                        </td>
-                        <td>
-                          <Checkbox
-                            color="primary"
-                            icon={<Check className="vx-icon" size={16} />}
-                            label=""
-                            defaultChecked={false}
-                          />
-                        </td>
-                        <td>
-                          {" "}
-                          <Checkbox
-                            color="primary"
-                            icon={<Check className="vx-icon" size={16} />}
-                            label=""
-                            defaultChecked={true}
-                          />
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>Articles</td>
-                        <td>
-                          <Checkbox
-                            color="primary"
-                            icon={<Check className="vx-icon" size={16} />}
-                            label=""
-                            defaultChecked={false}
-                          />
-                        </td>
-                        <td>
-                          <Checkbox
-                            color="primary"
-                            icon={<Check className="vx-icon" size={16} />}
-                            label=""
-                            defaultChecked={true}
-                          />
-                        </td>
-                        <td>
-                          <Checkbox
-                            color="primary"
-                            icon={<Check className="vx-icon" size={16} />}
-                            label=""
-                            defaultChecked={false}
-                          />
-                        </td>
-                        <td>
-                          {" "}
-                          <Checkbox
-                            color="primary"
-                            icon={<Check className="vx-icon" size={16} />}
-                            label=""
-                            defaultChecked={true}
-                          />
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>Staff</td>
-                        <td>
-                          <Checkbox
-                            color="primary"
-                            icon={<Check className="vx-icon" size={16} />}
-                            label=""
-                            defaultChecked={true}
-                          />
-                        </td>
-                        <td>
-                          <Checkbox
-                            color="primary"
-                            icon={<Check className="vx-icon" size={16} />}
-                            label=""
-                            defaultChecked={true}
-                          />
-                        </td>
-                        <td>
-                          <Checkbox
-                            color="primary"
-                            icon={<Check className="vx-icon" size={16} />}
-                            label=""
-                            defaultChecked={false}
-                          />
-                        </td>
-                        <td>
-                          {" "}
-                          <Checkbox
-                            color="primary"
-                            icon={<Check className="vx-icon" size={16} />}
-                            label=""
-                            defaultChecked={false}
-                          />
-                        </td>
-                      </tr>
-                    </tbody>
-                  </Table>
-                </div>
               </Col>
               <Col
                 className="d-flex justify-content-end flex-wrap mt-2"
