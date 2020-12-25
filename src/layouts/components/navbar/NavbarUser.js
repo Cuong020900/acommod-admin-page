@@ -44,7 +44,10 @@ const UserDropdown = props => {
       <DropdownItem
         tag="a"
         href="#"
-        onClick={e => history.push("/pages/login")}
+        onClick={e => {
+          localStorage.removeItem('userName')
+          history.push("/pages/login")
+        }}
       >
         <Icon.Power size={14} className="mr-50" />
         <span className="align-middle">Log Out</span>
@@ -56,12 +59,16 @@ const UserDropdown = props => {
 class NavbarUser extends React.PureComponent {
   state = {
     navbarSearch: false,
-    suggestions: []
+    suggestions: [],
+    listNotifications: []
   }
 
   componentDidMount() {
     axios.get("/api/main-search/data").then(({ data }) => {
       this.setState({ suggestions: data.searchResult })
+    })
+    axios.get("https://localhost:5000/api/Notification/notifowner").then(({ data }) => {
+      this.setState({ listNotifications: data })
     })
   }
 
@@ -71,6 +78,40 @@ class NavbarUser extends React.PureComponent {
     })
   }
 
+  genNotify = (data) => {
+    return (
+      <div>
+        {data.map(function(d, idx){
+          return (
+            <Media key={idx} className="d-flex align-items-start">
+              <Media left href="#">
+                <Icon.PlusSquare
+                  className="font-medium-5 danger"
+                  size={21}
+                />
+              </Media>
+              <Media body>
+                <Media heading className="danger media-heading" tag="h6">
+                  {d.content}
+                </Media>
+                <p className="notification-text">
+                  {"Post ID: " + d.postId}
+                </p>
+              </Media>
+              <small>
+                <time
+                  className="media-meta"
+                  dateTime="2015-06-11T18:29:20+08:00"
+                >
+                  9 hours ago
+                    </time>
+              </small>
+            </Media>
+          )
+        })}
+      </div>
+    )
+  }
 
   render() {
     return (
@@ -87,7 +128,7 @@ class NavbarUser extends React.PureComponent {
             })}
           >
             <div className="search-input-icon">
-              <Icon.Search size={17} className="primary" />
+              <Icon.Search size={17} className="danger" />
             </div>
             <Autocomplete
               className="form-control"
@@ -95,7 +136,7 @@ class NavbarUser extends React.PureComponent {
               filterKey="title"
               filterHeaderKey="groupTitle"
               grouped={true}
-              placeholder="Explore Vuexy..."
+              placeholder="Nhập gì đó..."
               autoFocus={true}
               clearInput={this.state.navbarSearch}
               externalClick={e => {
@@ -207,17 +248,21 @@ class NavbarUser extends React.PureComponent {
           className="dropdown-notification nav-item"
         >
           <DropdownToggle tag="a" className="nav-link nav-link-label">
-            <Icon.Bell size={21} />
-            <Badge pill color="primary" className="badge-up">
+            <Icon.Bell size={21} onClick={() => {
+              axios.get("https://localhost:5000/api/Notification/notifowner").then(({ data }) => {
+                this.setState({ listNotifications: data })
+              })
+            }} />
+            <Badge pill color="danger" className="badge-up">
               {" "}
-              5{" "}
+              {this.state.listNotifications.length}{" "}
             </Badge>
           </DropdownToggle>
           <DropdownMenu tag="ul" right className="dropdown-menu-media">
             <li className="dropdown-menu-header">
               <div className="dropdown-header mt-0">
-                <h3 className="text-white">5 New</h3>
-                <span className="notification-title">App Notifications</span>
+                <h3 className="text-white">{this.state.listNotifications.length}</h3>
+                <span className="notification-title">Thông báo</span>
               </div>
             </li>
             <PerfectScrollbar
@@ -226,134 +271,53 @@ class NavbarUser extends React.PureComponent {
                 wheelPropagation: false
               }}
             >
-              <div className="d-flex justify-content-between">
-                <Media className="d-flex align-items-start">
-                  <Media left href="#">
-                    <Icon.PlusSquare
-                      className="font-medium-5 primary"
-                      size={21}
-                    />
-                  </Media>
-                  <Media body>
-                    <Media heading className="primary media-heading" tag="h6">
-                      You have new order!
-                    </Media>
-                    <p className="notification-text">
-                      Are your going to meet me tonight?
-                    </p>
-                  </Media>
-                  <small>
-                    <time
-                      className="media-meta"
-                      dateTime="2015-06-11T18:29:20+08:00"
-                    >
-                      9 hours ago
+                {this.state.listNotifications.map(function (d, idx) {
+                  return (
+                    <div key={idx} className="d-flex justify-content-between">
+
+                      <Media className="d-flex align-items-start">
+                        <Media left href="#">
+                          <Icon.DownloadCloud
+                            className="font-medium-5 success"
+                            size={21}
+                          />
+                        </Media>
+                        <Media body>
+                          <Media heading className="danger media-heading" tag="h6">
+                            { function a() {
+                              switch (d.content) {
+                                case "POST_ACCEPTED": {
+                                  return "Bài đăng đã được duyệt"
+                                  break
+                                }
+                                case "POST_REJECTED": {
+                                  return "Bài đăng bị từ chối duyệt"
+                                  break
+                                }
+                                default: {
+                                  return d.content || "Thông báo"
+                                  break
+                                }
+                              }
+                            }()}
+                          </Media>
+                          <p className="notification-text">
+                            {"Post ID: " + d.postId}
+                          </p>
+                        </Media>
+                        <small>
+                          <time
+                            className="media-meta"
+                            dateTime="2015-06-11T18:29:20+08:00"
+                          >
+                            9 hours ago
                     </time>
-                  </small>
-                </Media>
-              </div>
-              <div className="d-flex justify-content-between">
-                <Media className="d-flex align-items-start">
-                  <Media left href="#">
-                    <Icon.DownloadCloud
-                      className="font-medium-5 success"
-                      size={21}
-                    />
-                  </Media>
-                  <Media body>
-                    <Media heading className="success media-heading" tag="h6">
-                      99% Server load
-                    </Media>
-                    <p className="notification-text">
-                      You got new order of goods?
-                    </p>
-                  </Media>
-                  <small>
-                    <time
-                      className="media-meta"
-                      dateTime="2015-06-11T18:29:20+08:00"
-                    >
-                      5 hours ago
-                    </time>
-                  </small>
-                </Media>
-              </div>
-              <div className="d-flex justify-content-between">
-                <Media className="d-flex align-items-start">
-                  <Media left href="#">
-                    <Icon.AlertTriangle
-                      className="font-medium-5 danger"
-                      size={21}
-                    />
-                  </Media>
-                  <Media body>
-                    <Media heading className="danger media-heading" tag="h6">
-                      Warning Notification
-                    </Media>
-                    <p className="notification-text">
-                      Server has used 99% of CPU
-                    </p>
-                  </Media>
-                  <small>
-                    <time
-                      className="media-meta"
-                      dateTime="2015-06-11T18:29:20+08:00"
-                    >
-                      Today
-                    </time>
-                  </small>
-                </Media>
-              </div>
-              <div className="d-flex justify-content-between">
-                <Media className="d-flex align-items-start">
-                  <Media left href="#">
-                    <Icon.CheckCircle
-                      className="font-medium-5 info"
-                      size={21}
-                    />
-                  </Media>
-                  <Media body>
-                    <Media heading className="info media-heading" tag="h6">
-                      Complete the task
-                    </Media>
-                    <p className="notification-text">
-                      One of your task is pending.
-                    </p>
-                  </Media>
-                  <small>
-                    <time
-                      className="media-meta"
-                      dateTime="2015-06-11T18:29:20+08:00"
-                    >
-                      Last week
-                    </time>
-                  </small>
-                </Media>
-              </div>
-              <div className="d-flex justify-content-between">
-                <Media className="d-flex align-items-start">
-                  <Media left href="#">
-                    <Icon.File className="font-medium-5 warning" size={21} />
-                  </Media>
-                  <Media body>
-                    <Media heading className="warning media-heading" tag="h6">
-                      Generate monthly report
-                    </Media>
-                    <p className="notification-text">
-                      Reminder to generate monthly report
-                    </p>
-                  </Media>
-                  <small>
-                    <time
-                      className="media-meta"
-                      dateTime="2015-06-11T18:29:20+08:00"
-                    >
-                      Last month
-                    </time>
-                  </small>
-                </Media>
-              </div>
-            </PerfectScrollbar>
+                        </small>
+                      </Media>
+                    </div>
+                  )
+                })}
+              </PerfectScrollbar>
             <li className="dropdown-menu-footer">
               <DropdownItem tag="a" className="p-1 text-center">
                 <span className="align-middle">Read all notifications</span>

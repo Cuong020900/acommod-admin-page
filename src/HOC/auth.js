@@ -6,7 +6,7 @@ export function requireAuthentication(Component) {
     class AuthenticatedComponent extends React.Component {
 
         componentDidMount () {
-            if (this.props.userInfo.userName === "") {
+            if (localStorage.getItem('userName') === null) {
                 this.props.history.push("/pages/login")
             }
         }

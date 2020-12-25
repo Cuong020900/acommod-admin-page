@@ -26,6 +26,8 @@ const userEdit = lazy(() => import("./views/pages/user/edit/Edit"))
 const userView = lazy(() => import("./views/pages/user/view/View"))
 const postManage = lazy(() => import("./views/pages/posts/PostManage"))
 const listPost = lazy(() => import("./views/pages/posts/ListPost"))
+const postReport = lazy(() => import("./views/pages/posts/Report"))
+const requestExtend = lazy(() => import("./views/pages/posts/RequestExtend"))
 
 // Set Layout and Component Using App Route
 const RouteConfig = ({
@@ -101,6 +103,8 @@ class AppRouter extends React.Component {
           <AppRoute path="/app/user/view" component={requireAuthentication(userView)} />
           <AppRoute path="/app/admin/post-manage/:id" component={requireAuthentication(postManage)} />
           <AppRoute path="/app/admin/list-post" component={requireAuthentication(listPost)} />
+          <AppRoute path="/app/admin/post-report" component={requireAuthentication(postReport)} />
+          <AppRoute path="/app/admin/request-extend" component={requireAuthentication(requestExtend)} />
         </Switch>
       </Router>
     )

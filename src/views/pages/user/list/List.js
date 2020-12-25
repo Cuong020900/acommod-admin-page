@@ -78,7 +78,7 @@ class UsersList extends React.Component {
               className="d-flex align-items-center cursor-pointer"
               onClick={() => history.push({
                 pathname: "/app/user/edit",
-                search: "?query=abc"
+                search: "?userId=" + params.data.id
               })}
             >
               <img
@@ -168,7 +168,10 @@ class UsersList extends React.Component {
                 color="blue"
                 className="mr-50"
                 size={15}
-                onClick={() => history.push("/app/user/view")}
+                onClick={() => history.push({
+                  pathname: "/app/user/view",
+                  search: "?id=" + params.data.id
+                })}
               />
               <Edit
                 color="green"
@@ -176,9 +179,7 @@ class UsersList extends React.Component {
                 size={15}
                 onClick={() => history.push({
                   pathname: "/app/user/edit",
-                  state: {
-                    id: 4
-                  }
+                  search: "?id=" + params.data.id
                 })}
               />
               <Trash2
