@@ -476,7 +476,7 @@ class UsersList extends React.Component {
                                     <div className="sort-dropdown">
                                         <UncontrolledDropdown className="ag-dropdown p-1">
                                             <DropdownToggle tag="div">
-                                                1 - {pageSize} of 150
+                                            1 - {pageSize} of { this.state?.rowData?.length }
                         <ChevronDown className="ml-50" size={15} />
                                             </DropdownToggle>
                                             <DropdownMenu right>

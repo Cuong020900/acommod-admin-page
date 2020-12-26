@@ -42,6 +42,7 @@ import "../../../../assets/scss/plugins/tables/_agGridStyleOverride.scss"
 import "../../../../assets/scss/pages/users.scss"
 class UsersList extends React.Component {
   state = {
+    userIdDelete: null,
     modal: false,
     rowData: null,
     pageSize: 20,
@@ -69,7 +70,7 @@ class UsersList extends React.Component {
       },
       {
         headerName: "Username",
-        field: "username",
+        field: "userName",
         filter: true,
         width: 250,
         cellRendererFramework: params => {
@@ -77,18 +78,20 @@ class UsersList extends React.Component {
             <div
               className="d-flex align-items-center cursor-pointer"
               onClick={() => history.push({
-                pathname: "/app/user/edit",
-                search: "?userId=" + params.data.id
+                pathname: "/app/user/view",
+                search: "?id=" + params.data.id
               })}
             >
               <img
                 className="rounded-circle mr-50"
-                src={params.data.avatar}
+                src={function a(){
+                  return require("../../../../assets/img/portrait/small/avatar-s-6.jpg")
+                }()}
                 alt="user avatar"
                 height="30"
                 width="30"
               />
-              <span>{params.data.username}</span>
+              <span>{"@" + params.data.userName}</span>
             </div>
           )
         }
@@ -97,7 +100,12 @@ class UsersList extends React.Component {
         headerName: "Name",
         field: "name",
         filter: true,
-        width: 200
+        width: 200,
+        cellRendererFramework: params => {
+          return (
+            params.data.firstName + " " + params.data.lastName
+          )
+        }
       },
       {
         headerName: "Address",
@@ -107,7 +115,7 @@ class UsersList extends React.Component {
       },
       {
         headerName: "Phone",
-        field: "phone",
+        field: "phoneNumber",
         filter: true,
         width: 250
       },
@@ -119,41 +127,34 @@ class UsersList extends React.Component {
       },
       {
         headerName: "Role",
-        field: "role",
-        filter: true,
-        width: 150
-      },
-      {
-        headerName: "Status",
-        field: "status",
+        field: "roles",
         filter: true,
         width: 150,
         cellRendererFramework: params => {
-          return params.value === "active" ? (
-            <div className="badge badge-pill badge-light-success">
-              {params.value}
-            </div>
-          ) : params.value === "blocked" ? (
-            <div className="badge badge-pill badge-light-danger">
-              {params.value}
-            </div>
-          ) : params.value === "deactivated" ? (
-            <div className="badge badge-pill badge-light-warning">
-              {params.value}
-            </div>
-          ) : null
+          let result = ""
+          Object.values(params.data?.roles).forEach(e => {
+            result += e + " "
+          })
+          if (result === "") {
+            return "user"
+          }
+          return result.toLowerCase()
         }
       },
       {
-        headerName: "Verified",
-        field: "is_verified",
+        headerName: "Đã xác nhận",
+        field: "isConfirm",
         filter: true,
-        width: 125,
+        width: 150,
         cellRendererFramework: params => {
           return params.value === true ? (
-            <div className="bullet bullet-sm bullet-primary"></div>
+            <div className="badge badge-pill badge-light-success">
+              {"Đã xác nhận"}
+            </div>
           ) : params.value === false ? (
-            <div className="bullet bullet-sm bullet-secondary"></div>
+            <div className="badge badge-pill badge-light-danger">
+              {"Chưa xác nhận"}
+            </div>
           ) : null
         }
       },
@@ -186,6 +187,9 @@ class UsersList extends React.Component {
                 color="red"
                 size={15}
                 onClick={() => {
+                  this.setState(prevState => ({
+                    userIdDelete: params.data.id
+                  }))
                   this.toggleModal()
                 }}
               />
@@ -203,7 +207,7 @@ class UsersList extends React.Component {
   }
 
   async componentDidMount() {
-    await axios.get("api/users/list").then(response => {
+    await axios.get("https://localhost:5000/api/User/getall", { withCredentials: true }).then(response => {
       let rowData = response.data
       this.setState({ rowData })
     })
@@ -294,7 +298,14 @@ class UsersList extends React.Component {
             <Button color="primary" onClick={this.toggleModal}>
               Hủy
           </Button>{" "}
-          <Button onClick={this.toggleModal}>
+          <Button onClick={() => {
+            axios.delete("https://localhost:5000/api/User/deletebyid?id=" + this.state.userIdDelete)
+            let listUser = this.state.rowData.filter(e => e.id !== this.state.userIdDelete)
+            this.setState(prevState => ({
+              rowData: listUser
+            }))
+            this.toggleModal()
+          }}>
               Xác nhận
           </Button> { " " }
           </ModalFooter>
@@ -357,50 +368,23 @@ class UsersList extends React.Component {
                             },
                             () =>
                               this.filterData(
-                                "role",
+                                "roles",
                                 this.state.role.toLowerCase()
                               )
                           )
                         }}
                       >
                         <option value="All">All</option>
-                        <option value="User">User</option>
-                        <option value="Staff">Staff</option>
+                        <option value="User">Người dùng</option>
+                        <option value="Mod">Quản trị viên</option>
+                        <option value="Owner">Chủ trọ</option>
                         <option value="Admin">Admin</option>
                       </Input>
                     </FormGroup>
                   </Col>
                   <Col lg="3" md="6" sm="12">
                     <FormGroup className="mb-0">
-                      <Label for="status">Status</Label>
-                      <Input
-                        type="select"
-                        name="status"
-                        id="status"
-                        value={this.state.selectStatus}
-                        onChange={e => {
-                          this.setState(
-                            {
-                              selectStatus: e.target.value
-                            },
-                            () =>
-                              this.filterData(
-                                "status",
-                                this.state.selectStatus.toLowerCase()
-                              )
-                          )
-                        }}
-                      >
-                        <option value="All">All</option>
-                        <option value="Active">Active</option>
-                        <option value="Blocked">Blocked</option>
-                        <option value="Deactivated">Deactivated</option>
-                      </Input>
-                    </FormGroup>
-                  </Col>
-                  <Col lg="3" md="6" sm="12">
-                    <FormGroup className="mb-0">
-                      <Label for="verified">Verified</Label>
+                      <Label for="verified">Trạng thái</Label>
                       <Input
                         type="select"
                         name="verified"
@@ -413,15 +397,15 @@ class UsersList extends React.Component {
                             },
                             () =>
                               this.filterData(
-                                "is_verified",
+                                "isConfirm",
                                 this.state.verified.toLowerCase()
                               )
                           )
                         }}
                       >
                         <option value="All">All</option>
-                        <option value="True">True</option>
-                        <option value="False">False</option>
+                        <option value="True">Đã xác nhận</option>
+                        <option value="False">Chưa xác nhận</option>
                       </Input>
                     </FormGroup>
                   </Col>
@@ -438,7 +422,7 @@ class UsersList extends React.Component {
                   <div className="sort-dropdown">
                     <UncontrolledDropdown className="ag-dropdown p-1">
                       <DropdownToggle tag="div">
-                        1 - {pageSize} of 150
+                        1 - {pageSize} of { this.state?.rowData?.length }
                         <ChevronDown className="ml-50" size={15} />
                       </DropdownToggle>
                       <DropdownMenu right>

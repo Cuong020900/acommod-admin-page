@@ -28,6 +28,7 @@ const postManage = lazy(() => import("./views/pages/posts/PostManage"))
 const listPost = lazy(() => import("./views/pages/posts/ListPost"))
 const postReport = lazy(() => import("./views/pages/posts/Report"))
 const requestExtend = lazy(() => import("./views/pages/posts/RequestExtend"))
+const cmtManager = lazy(() => import("./views/pages/posts/CommentManage"))
 
 // Set Layout and Component Using App Route
 const RouteConfig = ({
@@ -79,7 +80,7 @@ class AppRouter extends React.Component {
           <AppRoute
             exact
             path="/"
-            component={requireAuthentication(Home)}
+            component={Home}
           />
           <AppRoute
             path="/dashboard"
@@ -105,6 +106,7 @@ class AppRouter extends React.Component {
           <AppRoute path="/app/admin/list-post" component={requireAuthentication(listPost)} />
           <AppRoute path="/app/admin/post-report" component={requireAuthentication(postReport)} />
           <AppRoute path="/app/admin/request-extend" component={requireAuthentication(requestExtend)} />
+          <AppRoute path="/app/admin/cmt-manage" component={requireAuthentication(cmtManager)} />
         </Switch>
       </Router>
     )

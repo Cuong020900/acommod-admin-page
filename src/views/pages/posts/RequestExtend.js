@@ -58,7 +58,7 @@ class UsersList extends React.Component {
         itemSelected: null,
         modal: false,
         rowData: null,
-        pageSize: 5,
+        pageSize: 10,
         isVisible: true,
         reload: false,
         collapse: true,
@@ -85,14 +85,11 @@ class UsersList extends React.Component {
                 headerName: "Post Id",
                 field: "postId",
                 width: 150,
-                filter: true,
-                checkboxSelection: true,
-                headerCheckboxSelectionFilteredOnly: true,
-                headerCheckboxSelection: true
+                filter: true
             },
             {
                 headerName: "User Name",
-                field: "userId",
+                field: "userName",
                 filter: true,
                 width: 250,
                 cellRendererFramework: params => {
@@ -117,7 +114,23 @@ class UsersList extends React.Component {
                 headerName: "Giá",
                 field: "costOfExtend",
                 filter: true,
-                width: 650
+                width: 200,
+                cellRendererFramework: params => {
+                    return (
+                        params.data.costOfExtend + " VND"
+                    )
+                }
+            },
+            {
+                headerName: "Số tuần gia hạn",
+                field: "requestTime",
+                filter: true,
+                width: 350,
+                cellRendererFramework: params => {
+                    return (
+                        params.data.requestTime + " tuần"
+                    )
+                }
             },
             {
                 headerName: "Actions",
@@ -127,19 +140,23 @@ class UsersList extends React.Component {
                     return (
                         <div className="actions cursor-pointer">
                             <Check
-                                className="mr-50"
+                                className="mr-2"
                                 size={20}
                                 color="green"
-                                onClick={() => {
+                                onClick={async () => {
                                     // gui request xac nhan duyet
+                                    await axios.put("https://localhost:5000/api/RequestExtend/confirm?requestId=" + params.data.id)
+                                    this.getData()
                                 }}
                             />
                             <Trash2
                                 className="mr-50"
                                 size={20}
-                                color="green"
-                                onClick={() => {
-                                    this.openModal(params.data)
+                                color="red"
+                                onClick={async () => {
+                                    // gui request tu choi duyet
+                                    await axios.put("https://localhost:5000/api/RequestExtend/reject?requestId=" + params.data.id)
+                                    this.getData()
                                 }}
                             />
                         </div>
@@ -149,7 +166,10 @@ class UsersList extends React.Component {
         ]
     }
 
-    async componentDidMount() {
+    componentDidMount() {
+        this.getData()
+    }
+    async getData () {
         await axios.get("https://localhost:5000/api/RequestExtend/getrequest").then(response => {
             let rowData = response.data
             this.setState({ rowData })
@@ -296,7 +316,6 @@ class UsersList extends React.Component {
                                         classNamePrefix="select"
                                         defaultValue={function a(){
                                             let status = statusOptions.filter(e => e.value===this.state.itemSelected?.status)
-                                            console.log(status)
                                             return status[0]
                                         }.bind(this)()}
                                         name="color"
@@ -330,82 +349,6 @@ class UsersList extends React.Component {
                     </ModalFooter>
                 </Modal>
                 <Col sm="12">
-                    <Card
-                        className={classnames("card-action card-reload", {
-                            "d-none": this.state.isVisible === false,
-                            "card-collapsed": this.state.status === "Closed",
-                            closing: this.state.status === "Closing...",
-                            opening: this.state.status === "Opening...",
-                            refreshing: this.state.reload
-                        })}
-                    >
-                        <CardHeader>
-                            <CardTitle>Filters</CardTitle>
-                            <div className="actions">
-                                <ChevronDown
-                                    className="collapse-icon mr-50"
-                                    size={15}
-                                    onClick={this.toggleCollapse}
-                                />
-                                <RotateCw
-                                    className="mr-50"
-                                    size={15}
-                                    onClick={() => {
-                                        this.refreshCard()
-                                        this.gridApi.setFilterModel(null)
-                                    }}
-                                />
-                                <X size={15} onClick={this.removeCard} />
-                            </div>
-                        </CardHeader>
-                        <Collapse
-                            isOpen={this.state.collapse}
-                            onExited={this.onExited}
-                            onEntered={this.onEntered}
-                            onExiting={this.onExiting}
-                            onEntering={this.onEntering}
-                        >
-                            <CardBody>
-                                {this.state.reload ? (
-                                    <Spinner color="primary" className="reload-spinner" />
-                                ) : (
-                                        ""
-                                    )}
-                                <Row>
-                                    <Col lg="3" md="6" sm="12">
-                                        <FormGroup className="mb-0">
-                                            <Label for="status">Status</Label>
-                                            <Input
-                                                type="select"
-                                                name="status"
-                                                id="status"
-                                                value={this.state.selectStatus}
-                                                onChange={e => {
-                                                    this.setState(
-                                                        {
-                                                            selectStatus: e.target.value
-                                                        },
-                                                        () =>
-                                                            this.filterData(
-                                                                "status",
-                                                                this.state.selectStatus.toLowerCase()
-                                                            )
-                                                    )
-                                                }}
-                                            >
-                                                <option value="All">All</option>
-                                                <option value="Actived">Actived</option>
-                                                <option value="Pending">Pending</option>
-                                                <option value="Deleted">Deleted</option>
-                                            </Input>
-                                        </FormGroup>
-                                    </Col>
-                                    </Row>
-                            </CardBody>
-                        </Collapse>
-                    </Card>
-                </Col>
-                <Col sm="12">
                     <Card>
                         <CardBody>
                             <div className="ag-theme-material ag-grid-table">
@@ -413,7 +356,7 @@ class UsersList extends React.Component {
                                     <div className="sort-dropdown">
                                         <UncontrolledDropdown className="ag-dropdown p-1">
                                             <DropdownToggle tag="div">
-                                                1 - {pageSize} of 150
+                                            1 - {pageSize} of { this.state?.rowData?.length }
                         <ChevronDown className="ml-50" size={15} />
                                             </DropdownToggle>
                                             <DropdownMenu right>

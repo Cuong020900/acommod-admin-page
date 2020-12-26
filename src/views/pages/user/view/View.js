@@ -13,6 +13,7 @@ import {
 import { Edit, Trash, Lock, Check } from "react-feather"
 import { Link } from "react-router-dom"
 import Checkbox from "../../../../components/@vuexy/checkbox/CheckboxesVuexy"
+import { history } from "../../../../history"
 import userImg from "../../../../assets/img/portrait/small/avatar-s-18.jpg"
 import "../../../../assets/scss/pages/users.scss"
 import { withRouter } from "react-router"
@@ -33,8 +34,10 @@ class UserView extends React.Component {
       this.props.history.push("/")
     } else {
       // get user info 
-      await axios.get("api/users/list").then(response => {
-        let user = response.data[0]
+      await axios.get("https://localhost:5000/api/User/getbyId?id=" + userId, {
+        withCredentials: true
+      }).then(response => {
+        let user = response.data
         this.setState({ user })
       })
     }
@@ -70,13 +73,13 @@ class UserView extends React.Component {
                                 <div className="user-info-title font-weight-bold">
                                   Username
                                 </div>
-                                <div>{ this.state.user?.username }</div>
+                                <div>{ this.state.user?.userName }</div>
                               </div>
                               <div className="d-flex user-info">
                                 <div className="user-info-title font-weight-bold">
                                   Name
                                 </div>
-                                <div>{ this.state.user?.name }</div>
+                                <div>{ this.state.user?.firstName + " " + this.state.user?.lastName}</div>
                               </div>
                               <div className="d-flex user-info">
                                 <div className="user-info-title font-weight-bold">
@@ -92,22 +95,31 @@ class UserView extends React.Component {
                             <div className="users-page-view-table">
                               <div className="d-flex user-info">
                                 <div className="user-info-title font-weight-bold">
-                                  Status
+                                  Đã xác nhận
                                 </div>
-                                <div>{ this.state.user?.status }</div>
+                                <div>{ this.state.user?.isConfirm ? "Đã xác nhận" : "Chưa xác nhận"}</div>
                               </div>
                               <div className="d-flex user-info">
                                 <div className="user-info-title font-weight-bold">
                                   Role
                                 </div>
-                                <div>{ this.state.user?.role }</div>
+                                <div>{ function a(self) { 
+                                  let result = ""
+                                  Object.values(self.state.user?.roles ?? []).forEach(e => {
+                                    result += e + " "
+                                  })
+                                  if (result === "") {
+                                    return "user"
+                                  }
+                                  return result.toLowerCase()
+                                }(this) }</div>
                               </div>
                               <div className="d-flex user-info">
                                 <div className="user-info-title font-weight-bold">
-                                  Company
+                                  Địa chỉ
                                 </div>
                                 <div>
-                                  <span>North Star Aviation Pvt Ltd</span>
+                                  <span>{ this.state.user?.address }</span>
                                 </div>
                               </div>
                             </div>
@@ -123,7 +135,10 @@ class UserView extends React.Component {
                         <span className="align-middle ml-50">Edit</span>
                       </Link>
                     </Button.Ripple>
-                    <Button.Ripple color="danger" outline>
+                    <Button.Ripple color="danger" outline onClick={() => {
+                      axios.delete("https://localhost:5000/api/User/deletebyid?id=" + this.state.user?.id)
+                      history.push("/")
+                    }}>
                       <Trash size={15} />
                       <span className="align-middle ml-50">Delete</span>
                     </Button.Ripple>
