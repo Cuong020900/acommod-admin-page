@@ -18,13 +18,16 @@ import SocialTab from "./Social"
 import "../../../../assets/scss/pages/users.scss"
 import { withRouter } from "react-router"
 import axios from "axios"
+
 class UserEdit extends React.Component {
+
   constructor(props){
     super(props);
     this.state = {
       activeTab: "1",
       user: null
     }
+    this.query = new URLSearchParams(this.props.location.search)
   }
   async componentDidMount () {
     const query = new URLSearchParams(this.props.location.search)
@@ -33,13 +36,6 @@ class UserEdit extends React.Component {
 
     if (userId === null) {
       this.props.history.push("/")
-    } else {
-      // get user info 
-      await axios.get("api/users/list").then(async response => {
-        let user = response.data[0]
-        await this.setState({ user })
-        console.log(this.state)
-      })
     }
   }
 
@@ -97,7 +93,7 @@ class UserEdit extends React.Component {
               </Nav>
               <TabContent activeTab={this.state.activeTab}>
                 <TabPane tabId="1">
-                  <AccountTab {...this.state.user} />
+                  <AccountTab userId={this.query.get('id')}/>
                 </TabPane>
                 <TabPane tabId="2">
                   <InfoTab />

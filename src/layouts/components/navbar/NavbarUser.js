@@ -68,7 +68,7 @@ class NavbarUser extends React.PureComponent {
       this.setState({ suggestions: data.searchResult })
     })
     axios.get("https://localhost:5000/api/Notification/notifowner").then(({ data }) => {
-      this.setState({ listNotifications: data })
+      this.setState({ listNotifications: data.slice().reverse() });
     })
   }
 
@@ -95,7 +95,7 @@ class NavbarUser extends React.PureComponent {
                   {d.content}
                 </Media>
                 <p className="notification-text">
-                  {"Post ID: " + d.postId}
+                  {"Post ID: " + d.postId + " by " + d.userName}
                 </p>
               </Media>
               <small>
@@ -103,7 +103,7 @@ class NavbarUser extends React.PureComponent {
                   className="media-meta"
                   dateTime="2015-06-11T18:29:20+08:00"
                 >
-                  9 hours ago
+                  { d.notifTime }
                     </time>
               </small>
             </Media>
@@ -250,7 +250,7 @@ class NavbarUser extends React.PureComponent {
           <DropdownToggle tag="a" className="nav-link nav-link-label">
             <Icon.Bell size={21} onClick={() => {
               axios.get("https://localhost:5000/api/Notification/notifowner").then(({ data }) => {
-                this.setState({ listNotifications: data })
+                this.setState({ listNotifications: data.slice().reverse() })
               })
             }} />
             <Badge pill color="danger" className="badge-up">
@@ -294,15 +294,27 @@ class NavbarUser extends React.PureComponent {
                                   return "Bài đăng bị từ chối duyệt"
                                   break
                                 }
+                                case "REQUEST": {
+                                  return "Yêu cầu gia hạn, ID: " + d.requestId
+                                  break
+                                }
+                                case "REQUEST_ACCEPTED": {
+                                  return "Yêu cầu gia hạn thành công"
+                                  break
+                                }
+                                case "REQUEST_REJECTED": {
+                                  return "Yêu cầu gia hạn bị từ chối"
+                                  break
+                                }
                                 default: {
-                                  return d.content || "Thông báo"
+                                  return d.content || "Bài đăng bị hết hạn"
                                   break
                                 }
                               }
                             }()}
                           </Media>
                           <p className="notification-text">
-                            {"Post ID: " + d.postId}
+                            {"Post ID: " + d.postId + " by " + d.userName}
                           </p>
                         </Media>
                         <small>
@@ -310,7 +322,18 @@ class NavbarUser extends React.PureComponent {
                             className="media-meta"
                             dateTime="2015-06-11T18:29:20+08:00"
                           >
-                            9 hours ago
+                            { function a(){
+                              let time = new Date(Date.parse(d.notifTime))
+                              let now = new Date()
+                              let diffMiliSec = Math.abs(now - time)
+                              let diffMin = Math.ceil(diffMiliSec / (60 * 1000))
+                              let diffHours = Math.ceil(diffMiliSec / ( 3600 * 1000))
+                              let diffDays = Math.ceil(diffMiliSec / ( 86400 * 1000))
+                              if (diffDays > 1) return diffDays + " ngày trước"
+                              else if (diffHours > 1) return diffHours + " giờ trước"
+                              else if (diffMin > 1) return diffMin + " phút trước"
+                              else return "bây giờ"
+                            }() }
                     </time>
                         </small>
                       </Media>

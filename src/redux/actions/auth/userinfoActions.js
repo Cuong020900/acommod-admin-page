@@ -1,9 +1,23 @@
-export const getUserInfo = () => {
+export const getUserInfo = (data) => {
+    let path = "https://localhost:5000/api/Login/login"
     return dispatch => {
-        fetch('https://5fb733be8e07f00016642889.mockapi.io/login/3').then(e => e.json()).then(e => {
+    fetch(path, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+                // 'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: JSON.stringify(data)
+        }).then(e => e.json()).then(e => {
             dispatch({ type: "LOGIN", payload: e })
             localStorage.setItem('userName', e.userName)
         })
     }
-  }
-  
+}
+
+export const setUserInfo = (data) => {
+    return dispatch => {
+        dispatch({ type: "LOGIN", payload: data })
+        localStorage.setItem('userName', data.userName)
+    }
+}

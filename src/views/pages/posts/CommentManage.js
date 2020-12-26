@@ -28,7 +28,7 @@ import axios from "axios"
 import { ContextLayout } from "../../../utility/context/Layout"
 import { AgGridReact } from "ag-grid-react"
 import {
-    Edit,
+    Check,
     Trash2,
     ChevronDown,
     Clipboard,
@@ -58,8 +58,7 @@ class UsersList extends React.Component {
         itemSelected: null,
         modal: false,
         rowData: null,
-        pageSize: 10
-        ,
+        pageSize: 10,
         isVisible: true,
         reload: false,
         collapse: true,
@@ -74,8 +73,8 @@ class UsersList extends React.Component {
         searchVal: "",
         columnDefs: [
             {
-                headerName: "Post Id",
-                field: "postId",
+                headerName: "ID",
+                field: "commentId",
                 width: 150,
                 filter: true,
                 checkboxSelection: true,
@@ -83,33 +82,32 @@ class UsersList extends React.Component {
                 headerCheckboxSelection: true
             },
             {
-                headerName: "User Name",
-                field: "userId",
-                filter: true,
-                width: 250,
-                cellRendererFramework: params => {
-                    return (
-                        <div
-                            className="d-flex align-items-center cursor-pointer"
-                            onClick={() => history.push("/app/admin/post-manage")}
-                        >
-                            <img
-                                className="rounded-circle mr-50"
-                                src={avatarImg}
-                                alt="user avatar"
-                                height="30"
-                                width="30"
-                            />
-                            <span>{params.data.userName}</span>
-                        </div>
-                    )
-                }
+                headerName: "Post Id",
+                field: "postId",
+                width: 150,
+                filter: true
             },
             {
-                headerName: "Lí do",
-                field: "reason",
+                headerName: "Title",
+                field: "title",
                 filter: true,
-                width: 650
+                width: 350
+            },
+            {
+                headerName: "Nội dung",
+                field: "reviewContent",
+                filter: true,
+                width: 650,
+                height: 200
+            },
+            {
+                headerName: "Star",
+                field: "star",
+                filter: true,
+                width: 150,
+                cellRendererFramework: params => {
+                    return (<div>{params.data.star + " "}<Star size={20} className="text-warning" /></div>)
+                }
             },
             {
                 headerName: "Actions",
@@ -118,18 +116,23 @@ class UsersList extends React.Component {
                 cellRendererFramework: params => {
                     return (
                         <div className="actions cursor-pointer">
+                            <Check
+                                className="mr-2"
+                                size={20}
+                                color="green"
+                                onClick={async () => {
+                                    // gui request xac nhan duyet
+                                    await axios.post("https://localhost:5000/api/Comment/confirm?cmtId=" + params.data.commentId)
+                                    this.getData()
+                                }}
+                            />
                             <Trash2
                                 className="mr-50"
                                 size={20}
                                 color="red"
                                 onClick={async () => {
-                                    debugger
-                                    // gui request xoa report
-                                    await axios.delete("https://localhost:5000/api/Report/delete?reportId=" + params.data.reportId)
-                                    let data = this.state.rowData.filter(e => e.reportId !== params.data.reportId)
-                                    this.setState(prevState => ({
-                                        rowData: data
-                                    }))
+                                    await axios.post("https://localhost:5000/api/Comment/reject?cmtId=" + params.data.commentId)
+                                    this.getData()
                                 }}
                             />
                         </div>
@@ -140,7 +143,10 @@ class UsersList extends React.Component {
     }
 
     async componentDidMount() {
-        await axios.get("https://localhost:5000/api/Report/getall").then(response => {
+        this.getData()
+    }
+    async getData () {
+        await axios.get("https://localhost:5000/api/Comment/getconfirm").then(response => {
             let rowData = response.data
             this.setState({ rowData })
         })
@@ -286,6 +292,7 @@ class UsersList extends React.Component {
                                         classNamePrefix="select"
                                         defaultValue={function a(){
                                             let status = statusOptions.filter(e => e.value===this.state.itemSelected?.status)
+                                            console.log(status)
                                             return status[0]
                                         }.bind(this)()}
                                         name="color"

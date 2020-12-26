@@ -22,7 +22,7 @@ import { connect } from 'react-redux'
 
 import axios from "axios"
 
-import { getUserInfo } from '../../../../redux/actions/auth/userinfoActions'
+import { getUserInfo, setUserInfo } from '../../../../redux/actions/auth/userinfoActions'
 
 import { ToastContainer, toast } from 'react-toastify'
 
@@ -56,12 +56,15 @@ class Login extends React.Component {
         'Content-Type': 'application/json'
         // 'Content-Type': 'application/x-www-form-urlencoded',
       },
+      credentials: "include",
       body: JSON.stringify(dataSend) // body data type must match "Content-Type" header
     });
 
     if (response.status === 200) {
-      await this.props.getData()
-      history.push("/")
+      response.json().then(data => {
+        this.props.setData(data)
+        history.push("/")
+      })
     } else {
       this.notifyWarning()
     }
@@ -126,8 +129,10 @@ class Login extends React.Component {
                             </div>
                           </FormGroup>
                           <div className="d-flex justify-content-between">
-                            <Button.Ripple color="primary" outline>
-                             Register                           
+                            <Button.Ripple color="primary" outline onClick={() => { 
+                              window.open('https://localhost:3000/sign-up')
+                            }}>
+                              Register                           
                             </Button.Ripple>
                             <Button.Ripple color="primary" type="submit" onClick={() => { 
                               this.login()
@@ -168,7 +173,8 @@ class Login extends React.Component {
 
 const mapDispatchToProps = dispatch => {
   return {
-    getData: () => dispatch(getUserInfo())
+    getData: (data) => dispatch(getUserInfo(data)),
+    setData: (data) => dispatch(setUserInfo(data))
   }
 }
 const mapStateToProps = (state, ownProps) => {

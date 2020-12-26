@@ -76,7 +76,6 @@ const ThemeNavbar = props => {
 }
 
 const mapStateToProps = (state, ownProps) => {
-  console.log(state)
   return {
     userInfo: state.auth.userInfo
   }

@@ -6,9 +6,16 @@ export function requireAuthentication(Component) {
     class AuthenticatedComponent extends React.Component {
 
         componentDidMount () {
-            if (localStorage.getItem('userName') === null) {
-                this.props.history.push("/pages/login")
-            }
+            // check con trong phien dang nhap hay khong
+            let isLoggedIn = false
+            fetch("https://localhost:5000/api/Login/check", {
+                credentials: 'include'
+            }).then(e => e.json()).then(e => {
+                isLoggedIn = e
+                if (!isLoggedIn || localStorage.getItem('userName') === null) {
+                    this.props.history.push("/pages/login")
+                }
+            })
         }
 
         render() {

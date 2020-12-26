@@ -36,7 +36,7 @@ const navigationConfig = [
         id: "list",
         title: "Danh sách user",
         type: "item",
-        icon: <Icon.Circle size={12} />,
+        icon: <Icon.UserPlus size={12} />,
         permissions: ["admin", "editor"],
         navLink: "/app/user/list"
       }
@@ -60,7 +60,7 @@ const navigationConfig = [
         id: "post-report",
         title: "Báo cáo bài viết",
         type: "item",
-        icon: <Icon.Book size={12} />,
+        icon: <Icon.GitBranch size={12} />,
         permissions: ["admin"],
         navLink: "/app/admin/post-report"
       },
@@ -68,9 +68,17 @@ const navigationConfig = [
         id: "request-extend",
         title: "Yêu cầu gia hạn",
         type: "item",
-        icon: <Icon.Book size={12} />,
+        icon: <Icon.Airplay size={12} />,
         permissions: ["admin"],
         navLink: "/app/admin/request-extend"
+      },
+      {
+        id: "comment-manage",
+        title: "Quản lý bình luận",
+        type: "item",
+        icon: <Icon.Command size={12} />,
+        permissions: ["admin"],
+        navLink: "/app/admin/cmt-manage"
       }
     ]
   },
