@@ -109,10 +109,10 @@ class Home extends React.Component {
                     </CardHeader>
                     <CardBody>
                     <h5 className="mb-1">Bài viết nổi bật nhất </h5>
-                    <a href={"https://localhost:3000/product-detail/" + this.state.mostView?.link} target="_blank" className="mb-1">{this.state.mostView?.name ?? ""}</a>
+                    <a href={this.state.mostView?.link} target="_blank" className="mb-1">{this.state.mostView?.name ?? ""}</a>
                     <hr />
                     <h5 className="mb-1">Bài viết được yêu thích nhất </h5>
-                    <a href={"https://localhost:3000/product-detail/" + this.state.mostLike?.link} target="_blank" className="mb-1">{this.state.mostLike?.name ?? ""}</a>
+                    <a href={this.state.mostLike?.link} target="_blank" className="mb-1">{this.state.mostLike?.name ?? ""}</a>
                     </CardBody>
                 </Card>
         <MostLike />
