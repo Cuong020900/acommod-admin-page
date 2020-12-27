@@ -10,6 +10,14 @@ const navigationConfig = [
     navLink: "/"
   },
   {
+    id: "chat",
+    title: "Chat",
+    type: "item",
+    icon: <Icon.MessageSquare size={20} />,
+    permissions: ["admin", "editor"],
+    navLink: "/app/admin/chat"
+  },
+  {
     id: "dashboard",
     title: "Dashboard",
     type: "collapse",
