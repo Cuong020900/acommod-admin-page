@@ -94,7 +94,6 @@ class UsersList extends React.Component {
                     return (
                         <div
                             className="d-flex align-items-center cursor-pointer"
-                            onClick={() => history.push("/app/admin/post-manage")}
                         >
                             <img
                                 className="rounded-circle mr-50"
@@ -180,11 +179,23 @@ class UsersList extends React.Component {
                     return (
                         <div className="actions cursor-pointer">
                             <Edit
-                                className="mr-50"
+                                className="mr-2"
                                 size={20}
                                 color="green"
                                 onClick={() => {
                                     this.openModal(params.data)
+                                }}
+                            />
+                            <Trash2
+                                className="mr-50"
+                                size={20}
+                                color="red"
+                                onClick={async () => {
+                                    await axios.delete("https://localhost:5000/api/Post/delete?postId=" + params.data.postId, { 
+                                        data: {postId: params.data.postId},
+                                        withCredentials: true
+                                    })
+                                    this.getData()
                                 }}
                             />
                         </div>
@@ -194,8 +205,14 @@ class UsersList extends React.Component {
         ]
     }
 
-    async componentDidMount() {
-        await axios.get("https://localhost:5000/api/Post/getallforowner").then(response => {
+    componentDidMount() {
+        this.getData()
+    }
+
+    async getData () {
+        await axios.get("https://localhost:5000/api/Post/getallformod", { 
+            withCredentials: true
+        }).then(response => {
             let rowData = response.data
             this.setState({ rowData })
         })
@@ -269,10 +286,14 @@ class UsersList extends React.Component {
 
         // gui request change status
         let path = `https://localhost:5000/api/Post/changestatus?postId=${this.state.itemSelected?.postId}&postStatusEnum=${this.state.postChanged?.status}`
-        let res = await axios.put(path)
+        let res = await axios.put(path,{postId: this.state.itemSelected?.postId, postStatusEnum: this.state.postChanged?.status}, {
+            withCredentials: true
+        })
 
         if (res.status === 200) {
-            await axios.get("https://localhost:5000/api/Post/getallforowner").then(response => {
+            await axios.get("https://localhost:5000/api/Post/getallformod", { 
+                withCredentials: true
+            }).then(response => {
                 let rowData = response.data
                 this.setState({ rowData })
             })

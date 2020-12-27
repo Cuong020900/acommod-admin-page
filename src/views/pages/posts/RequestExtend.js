@@ -96,7 +96,6 @@ class UsersList extends React.Component {
                     return (
                         <div
                             className="d-flex align-items-center cursor-pointer"
-                            onClick={() => history.push("/app/admin/post-manage")}
                         >
                             <img
                                 className="rounded-circle mr-50"
@@ -145,7 +144,11 @@ class UsersList extends React.Component {
                                 color="green"
                                 onClick={async () => {
                                     // gui request xac nhan duyet
-                                    await axios.put("https://localhost:5000/api/RequestExtend/confirm?requestId=" + params.data.id)
+                                    await axios.put("https://localhost:5000/api/RequestExtend/confirm?requestId=" + params.data.id, {
+                                        requestId: params.data.id
+                                    },{ 
+                                        withCredentials: true
+                                    })
                                     this.getData()
                                 }}
                             />
@@ -155,7 +158,11 @@ class UsersList extends React.Component {
                                 color="red"
                                 onClick={async () => {
                                     // gui request tu choi duyet
-                                    await axios.put("https://localhost:5000/api/RequestExtend/reject?requestId=" + params.data.id)
+                                    await axios.put("https://localhost:5000/api/RequestExtend/reject?requestId=" + params.data.id, {
+                                        requestId: params.data.id
+                                    }, { 
+                                        withCredentials: true
+                                    })
                                     this.getData()
                                 }}
                             />
@@ -170,7 +177,9 @@ class UsersList extends React.Component {
         this.getData()
     }
     async getData () {
-        await axios.get("https://localhost:5000/api/RequestExtend/getrequest").then(response => {
+        await axios.get("https://localhost:5000/api/RequestExtend/getrequest", { 
+            withCredentials: true
+        }).then(response => {
             let rowData = response.data
             this.setState({ rowData })
         })

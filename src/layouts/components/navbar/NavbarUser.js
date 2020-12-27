@@ -71,7 +71,9 @@ class NavbarUser extends React.PureComponent {
   }
 
   async getData () {
-    axios.get("https://localhost:5000/api/Notification/getAll").then(({ data }) => {
+    axios.get("https://localhost:5000/api/Notification/getAll", { 
+      withCredentials: true
+    }).then(({ data }) => {
       this.setState({ listNotifications: data.slice().reverse() });
     })
   }
@@ -218,11 +220,19 @@ class NavbarUser extends React.PureComponent {
         >
           <DropdownToggle tag="a" className="nav-link nav-link-label">
             <Icon.Bell size={21} onClick={() => {
-              axios.get("https://localhost:5000/api/Notification/getAll").then(({ data }) => {
+              axios.get("https://localhost:5000/api/Notification/getAll", { 
+                withCredentials: true
+              }).then(({ data }) => {
                 this.setState({ listNotifications: data.slice().reverse() })
               })
             }} />
-            <Badge pill color="danger" className="badge-up">
+            <Badge pill color="danger" className="badge-up" onClick={() => {
+              axios.get("https://localhost:5000/api/Notification/getAll", {
+                withCredentials: true
+              }).then(({ data }) => {
+                this.setState({ listNotifications: data.slice().reverse() })
+              })
+            }} >
               {" "}
               {this.state.listNotifications.length}{" "}
             </Badge>
@@ -290,7 +300,7 @@ class NavbarUser extends React.PureComponent {
                                 }
                                 default: {
                                   return (
-                                    <Icon.Delete
+                                    <Icon.PlusSquare
                                       className="font-medium-5 danger"
                                       size={12}
                                     />
@@ -321,6 +331,10 @@ class NavbarUser extends React.PureComponent {
                                 }
                                 case "REQUEST_REJECTED": {
                                   return "Yêu cầu gia hạn bị từ chối"
+                                  break
+                                }
+                                case "REQUEST_EXTEND": {
+                                  return "Yêu cầu gia hạn"
                                   break
                                 }
                                 default: {
@@ -358,9 +372,8 @@ class NavbarUser extends React.PureComponent {
                           size={20}
                           onClick={async () => {
                             // request delete action
-                            await axios.delete("https://localhost:5000/api/Notification/delete?id=" + d.notifId, {
-                              id: d.notifId
-                            }, {
+                            await axios.delete("https://localhost:5000/api/Notification/delete?notiId=" + d.notifId, {
+                              data: {notiId: d.notifId},
                               withCredentials: true
                             })
                             this.getData()

@@ -127,7 +127,9 @@ class UserView extends React.Component {
                       </Link>
                     </Button.Ripple>
                     <Button.Ripple color="danger" outline onClick={() => {
-                      axios.delete("https://localhost:5000/api/User/deletebyid?id=" + this.state.user?.id)
+                      axios.delete("https://localhost:5000/api/User/deletebyid?id=" + this.state.user?.id, { 
+                        withCredentials: true
+                      })
                       history.push("/")
                     }}>
                       <Trash size={15} />

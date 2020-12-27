@@ -311,7 +311,9 @@ class UsersList extends React.Component {
               Hủy
           </Button>{" "}
           <Button onClick={() => {
-            axios.delete("https://localhost:5000/api/User/deletebyid?id=" + this.state.userIdDelete)
+            axios.delete("https://localhost:5000/api/User/deletebyid?id=" + this.state.userIdDelete, { 
+              withCredentials: true
+            })
             let listUser = this.state.rowData.filter(e => e.id !== this.state.userIdDelete)
             this.setState(prevState => ({
               rowData: listUser
