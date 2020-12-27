@@ -57,7 +57,7 @@ class UserAccountTab extends React.Component {
       email: this.state?.email,
       address: this.state?.address
     }
-    await fetch("https://localhost:5000/api/User/update?userId=" + this.state?.id, {
+    await fetch("https://localhost:5000/api/User/updateforadmin?userId=" + this.state?.id, {
       "headers": {
         "accept": "*/*",
         "accept-language": "vi,en-US;q=0.9,en;q=0.8",
@@ -188,9 +188,16 @@ class UserAccountTab extends React.Component {
                     type="select"
                     name="status"
                     id="status"
-                    defaultValue={this.state?.user?.roles}
+                    value={this.state.user?.role}
                     onChange={e => {
-                      this.assignRole(e.target?.value)
+                      let role = e.target?.value
+                      this.assignRole(role)
+                      this.setState(prevState => ({
+                        user: {
+                          ...prevState.user,
+                          role: role
+                        }
+                      }))
                     }}
                 >
                     <option value={"ADMIN"}>Admin</option>

@@ -67,7 +67,7 @@ class NavbarUser extends React.PureComponent {
     axios.get("/api/main-search/data").then(({ data }) => {
       this.setState({ suggestions: data.searchResult })
     })
-    axios.get("https://localhost:5000/api/Notification/notifowner").then(({ data }) => {
+    axios.get("https://localhost:5000/api/Notification/getAll").then(({ data }) => {
       this.setState({ listNotifications: data.slice().reverse() });
     })
   }
@@ -249,7 +249,7 @@ class NavbarUser extends React.PureComponent {
         >
           <DropdownToggle tag="a" className="nav-link nav-link-label">
             <Icon.Bell size={21} onClick={() => {
-              axios.get("https://localhost:5000/api/Notification/notifowner").then(({ data }) => {
+              axios.get("https://localhost:5000/api/Notification/getAll").then(({ data }) => {
                 this.setState({ listNotifications: data.slice().reverse() })
               })
             }} />
