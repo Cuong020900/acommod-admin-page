@@ -224,7 +224,6 @@ class UsersList extends React.Component {
         }))
     }
     openModal = (item) => {
-        console.log(item)
         this.setState(prevState => ({
             itemSelected: item,
             modal: true,
@@ -292,7 +291,6 @@ class UsersList extends React.Component {
                                         classNamePrefix="select"
                                         defaultValue={function a(){
                                             let status = statusOptions.filter(e => e.value===this.state.itemSelected?.status)
-                                            console.log(status)
                                             return status[0]
                                         }.bind(this)()}
                                         name="color"

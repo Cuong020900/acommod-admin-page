@@ -26,6 +26,7 @@ import axios from "axios"
 import { ContextLayout } from "../../../../utility/context/Layout"
 import { AgGridReact } from "ag-grid-react"
 import {
+  CheckCircle,
   Eye,
   Edit,
   Trash2,
@@ -127,19 +128,9 @@ class UsersList extends React.Component {
       },
       {
         headerName: "Role",
-        field: "roles",
+        field: "role",
         filter: true,
-        width: 150,
-        cellRendererFramework: params => {
-          let result = ""
-          Object.values(params.data?.roles).forEach(e => {
-            result += e + " "
-          })
-          if (result === "") {
-            return "user"
-          }
-          return result.toLowerCase()
-        }
+        width: 150
       },
       {
         headerName: "Đã xác nhận",
@@ -165,6 +156,23 @@ class UsersList extends React.Component {
         cellRendererFramework: params => {
           return (
             <div className="actions cursor-pointer">
+              {
+                params.data.isConfirm || (
+                  <CheckCircle
+                    color="black"
+                    className="mr-50"
+                    size={15}
+                    onClick={async () => {
+                      await axios.put("https://localhost:5000/api/User/confirm?userId=" + params.data.id, {
+                        userId: params.data.id
+                      }, {
+                        withCredentials: true
+                      })
+                      this.getData()
+                    }}>
+                  </CheckCircle>
+                )
+              }
               <Eye
                 color="blue"
                 className="mr-50"
@@ -207,6 +215,10 @@ class UsersList extends React.Component {
   }
 
   async componentDidMount() {
+    this.getData()
+  }
+
+  async getData () {
     await axios.get("https://localhost:5000/api/User/getall", { withCredentials: true }).then(response => {
       let rowData = response.data
       this.setState({ rowData })

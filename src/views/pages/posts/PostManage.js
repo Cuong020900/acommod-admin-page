@@ -12,7 +12,6 @@ import {
 import userImg from "../../../assets/img/portrait/small/avatar-s-19.jpg"
 class PostManage extends React.Component {
     test () {
-        console.log(this.props.match.params.id)
     }
     render () {
         return (

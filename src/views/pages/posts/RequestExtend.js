@@ -248,7 +248,6 @@ class UsersList extends React.Component {
         }))
     }
     openModal = (item) => {
-        console.log(item)
         this.setState(prevState => ({
             itemSelected: item,
             modal: true,

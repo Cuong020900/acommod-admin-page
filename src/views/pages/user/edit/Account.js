@@ -188,9 +188,16 @@ class UserAccountTab extends React.Component {
                     type="select"
                     name="status"
                     id="status"
-                    defaultValue={this.state?.user?.roles}
+                    value={this.state.user?.role}
                     onChange={e => {
-                      this.assignRole(e.target?.value)
+                      let role = e.target?.value
+                      this.assignRole(role)
+                      this.setState(prevState => ({
+                        user: {
+                          ...prevState.user,
+                          role: role
+                        }
+                      }))
                     }}
                 >
                     <option value={"ADMIN"}>Admin</option>

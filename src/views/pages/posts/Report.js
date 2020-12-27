@@ -123,7 +123,6 @@ class UsersList extends React.Component {
                                 size={20}
                                 color="red"
                                 onClick={async () => {
-                                    debugger
                                     // gui request xoa report
                                     await axios.delete("https://localhost:5000/api/Report/delete?reportId=" + params.data.reportId)
                                     let data = this.state.rowData.filter(e => e.reportId !== params.data.reportId)
@@ -218,7 +217,6 @@ class UsersList extends React.Component {
         }))
     }
     openModal = (item) => {
-        console.log(item)
         this.setState(prevState => ({
             itemSelected: item,
             modal: true,

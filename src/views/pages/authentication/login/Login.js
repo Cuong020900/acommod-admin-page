@@ -62,6 +62,7 @@ class Login extends React.Component {
 
     if (response.status === 200) {
       response.json().then(data => {
+        if (data.role === "RENTER" || data.role === "OWNER") return toast.warning("Tài khoản không đủ quyền truy cập!")
         this.props.setData(data)
         history.push("/")
       })

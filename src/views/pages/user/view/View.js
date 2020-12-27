@@ -103,16 +103,7 @@ class UserView extends React.Component {
                                 <div className="user-info-title font-weight-bold">
                                   Role
                                 </div>
-                                <div>{ function a(self) { 
-                                  let result = ""
-                                  Object.values(self.state.user?.roles ?? []).forEach(e => {
-                                    result += e + " "
-                                  })
-                                  if (result === "") {
-                                    return "user"
-                                  }
-                                  return result.toLowerCase()
-                                }(this) }</div>
+                                <div>{ this.state.user?.role }</div>
                               </div>
                               <div className="d-flex user-info">
                                 <div className="user-info-title font-weight-bold">
