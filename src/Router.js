@@ -21,6 +21,8 @@ const login = lazy(() =>
   import("./views/pages/authentication/login/Login")
 )
 
+const chat = lazy(() => import("./views/pages/chat/Chat"))
+
 const userList = lazy(() => import("./views/pages/user/list/List"))
 const userEdit = lazy(() => import("./views/pages/user/edit/Edit"))
 const userView = lazy(() => import("./views/pages/user/view/View"))
@@ -107,6 +109,7 @@ class AppRouter extends React.Component {
           <AppRoute path="/app/admin/post-report" component={requireAuthentication(postReport)} />
           <AppRoute path="/app/admin/request-extend" component={requireAuthentication(requestExtend)} />
           <AppRoute path="/app/admin/cmt-manage" component={requireAuthentication(cmtManager)} />
+          <AppRoute path="/app/admin/chat" component={requireAuthentication(chat)} />
         </Switch>
       </Router>
     )

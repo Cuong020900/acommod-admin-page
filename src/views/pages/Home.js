@@ -1,25 +1,32 @@
 import React from "react"
 import { Card, CardHeader, CardTitle, CardBody, Row, Col } from "reactstrap"
-import Chart from "react-apexcharts"
 import axios from "axios"
 import SalesCard from "./analytics/SalesCard"
+import ViewPerDays from "./analytics/ViewPerDays"
+import MostView from "./analytics/MostView"
+import MostLike from "./analytics/MostLike"
+
+let $primary = "#7367F0",
+  $danger = "#EA5455",
+  $warning = "#FF9F43",
+  $info = "#00cfe8",
+  $primary_light = "#9c8cfc",
+  $warning_light = "#FFC085",
+  $danger_light = "#f29292",
+  $info_light = "#1edec5",
+  $stroke_color = "#e8e8e8",
+  $label_color = "#e7eef7",
+  $white = "#fff"
 class Home extends React.Component {
   state = {
+    mostView: null,
+    mostLike: null,
     options: {
       chart: {
         id: "lineChart"
       },
       xaxis: {
         categories: [
-          "Jan",
-          "Feb",
-          "Mar",
-          "Apr",
-          "May",
-          "Jun",
-          "Jul",
-          "Aug",
-          "Sep"
         ]
       },
       stroke: {
@@ -64,13 +71,31 @@ class Home extends React.Component {
         ]
       })
     })
+    let mostView = await axios.get("https://localhost:5000/api/Post/mostview", {
+      withCredentials: true
+    })
+    let mostLike = await axios.get("https://localhost:5000/api/Post/mostlike", {
+      withCredentials: true
+    })
+
+    mostView = {
+      name: "Post ID: " + mostView.data[0].postId + " được tạo bởi " + mostView.data[0].userName + " vào lúc " + new Date(mostView.data[0].publicTime).toJSON().slice(0,10),
+      link: "https://localhost:3000/product-detail/" + mostView.data[0].postId
+    }
+
+    mostLike = {
+      name: "Post ID: " + mostLike.data[0].postId + " được tạo bởi " + mostLike.data[0].userName + " vào lúc " + new Date(mostLike.data[0].publicTime).toJSON().slice(0,10),
+      link: "https://localhost:3000/product-detail/" + mostLike.data[0].postId
+    }
+
+    this.setState(prevState => ({ mostView: mostView, mostLike: mostLike}))
 }
 
   render() {
     return (
       <React.Fragment>
         <Row className="match-height">
-          <Col lg="6" md="12">
+          <Col lg="12" md="12">
             <SalesCard />
           </Col>
           <Col lg="3" md="6" sm="12">
@@ -79,24 +104,20 @@ class Home extends React.Component {
           </Col>
         </Row>
         <Card>
-        <CardHeader>
-          <CardTitle>Line Chart</CardTitle>
-        </CardHeader>
-        <CardBody>
-          <Chart
-            options={this.state.options}
-            series={this.state.series}
-            type="line"
-            height={350}
-          />
-           <Chart
-            options={this.state.options}
-            series={this.state.series}
-            type="bar"
-            height={350}
-          />
-        </CardBody>
-      </Card>
+                    <CardHeader>
+                        <CardTitle>Tổng quan</CardTitle>
+                    </CardHeader>
+                    <CardBody>
+                    <h5 className="mb-1">Bài viết nổi bật nhất </h5>
+                    <a href={"https://localhost:3000/product-detail/" + this.state.mostView?.link} target="_blank" className="mb-1">{this.state.mostView?.name ?? ""}</a>
+                    <hr />
+                    <h5 className="mb-1">Bài viết được yêu thích nhất </h5>
+                    <a href={"https://localhost:3000/product-detail/" + this.state.mostLike?.link} target="_blank" className="mb-1">{this.state.mostLike?.name ?? ""}</a>
+                    </CardBody>
+                </Card>
+        <MostLike />
+        <MostView />
+        <ViewPerDays />
       </React.Fragment>
       
     )
