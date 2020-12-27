@@ -82,7 +82,7 @@ class AppRouter extends React.Component {
           <AppRoute
             exact
             path="/"
-            component={Home}
+            component={requireAuthentication(Home)}
           />
           <AppRoute
             path="/dashboard"

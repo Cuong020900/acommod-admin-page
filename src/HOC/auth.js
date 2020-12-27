@@ -11,9 +11,12 @@ export function requireAuthentication(Component) {
             fetch("https://localhost:5000/api/Login/check", {
                 credentials: 'include'
             }).then(e => e.json()).then(e => {
-                isLoggedIn = e
+                isLoggedIn = e.status
                 if (!isLoggedIn || localStorage.getItem('userName') === null) {
                     this.props.history.push("/pages/login")
+                }
+                if (isLoggedIn) {
+                    localStorage.setItem('userName', e.userName)
                 }
             })
         }

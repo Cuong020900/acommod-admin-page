@@ -373,7 +373,7 @@ class UsersList extends React.Component {
                         <Card className="w-100">
                             <CardBody>
                             <h5 className="mb-1">Link bài viết:</h5>
-                            <a href={"https://easy-accomod.netlify.app/product-detail/" + this.state.itemSelected?.postId} target="_blank" className="mb-1">{"Link tới bài viết"}</a>
+                            <a href={"http://localhost:3000/product-detail/" + this.state.itemSelected?.postId} target="_blank" className="mb-1">{"Link tới bài viết"}</a>
                             <hr />
                             <Row>
                                 <Col md="6" sm="12">
