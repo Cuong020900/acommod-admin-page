@@ -57,7 +57,7 @@ class UserAccountTab extends React.Component {
       email: this.state?.email,
       address: this.state?.address
     }
-    await fetch("https://localhost:5000/api/User/update?userId=" + this.state?.id, {
+    await fetch("https://localhost:5000/api/User/updateforadmin?userId=" + this.state?.id, {
       "headers": {
         "accept": "*/*",
         "accept-language": "vi,en-US;q=0.9,en;q=0.8",
