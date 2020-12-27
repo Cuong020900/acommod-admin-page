@@ -3,4 +3,4 @@
 - clone repo vào thư mục EasyAcommod
 - cd vào EasyAcommod và chạy yarn hoặc npm install
 - sau khi cài xong node_modules thì chạy bằng yarn start hoặc npm start
-Love <3
+- Love <3
