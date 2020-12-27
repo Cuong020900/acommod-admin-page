@@ -32,6 +32,10 @@ class UserAccountTab extends React.Component {
   }
 
   async componentDidMount () {
+    this.getData()
+  }
+
+  async getData () {
     await axios.get("https://localhost:5000/api/User/getbyId?id=" + this.props?.userId, {
         withCredentials: true
       }).then(async response => {
@@ -114,8 +118,8 @@ class UserAccountTab extends React.Component {
               />
             </Media>
             <Media className="mt-2" body>
-              <Media className="font-medium-1 text-bold-600" tag="p" heading>
-                { this.state.user?.name }
+              <Media className="font-medium-5 text-bold-600 text-primary mb-2" tag="p" heading>
+                { "  " + this.state.user?.userName + " - " +  this.state.user?.firstName + " " + this.state.user?.lastName}
               </Media>
               <div className="d-flex flex-wrap">
                 <Button.Ripple className="mr-1" color="primary" outline>
@@ -239,7 +243,9 @@ class UserAccountTab extends React.Component {
                 <Button.Ripple className="mr-1" color="primary" onClick={this.updateUserInfo}>
                   Lưu thay đổi
                 </Button.Ripple>
-                <Button.Ripple color="flat-warning">Reset</Button.Ripple>
+                <Button.Ripple color="flat-warning" onClick={() => {
+                  this.getData()
+                }}>Reset</Button.Ripple>
               </Col>
             </Row>
           </Form>

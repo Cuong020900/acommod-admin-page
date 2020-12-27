@@ -226,7 +226,7 @@ class UserInfoTab extends React.Component {
           </Col>
           <Col className="d-flex justify-content-end flex-wrap" sm="12">
             <Button.Ripple className="mr-1" color="primary">
-              Save Changes
+              Lưu thay đổi
             </Button.Ripple>
             <Button.Ripple color="flat-warning">Reset</Button.Ripple>
           </Col>
