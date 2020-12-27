@@ -91,7 +91,6 @@ class UsersList extends React.Component {
                     return (
                         <div
                             className="d-flex align-items-center cursor-pointer"
-                            onClick={() => history.push("/app/admin/post-manage")}
                         >
                             <img
                                 className="rounded-circle mr-50"
@@ -124,7 +123,9 @@ class UsersList extends React.Component {
                                 color="red"
                                 onClick={async () => {
                                     // gui request xoa report
-                                    await axios.delete("https://localhost:5000/api/Report/delete?reportId=" + params.data.reportId)
+                                    await axios.delete("https://localhost:5000/api/Report/delete?reportId=" + params.data.reportId, { 
+                                        withCredentials: true
+                                    })
                                     let data = this.state.rowData.filter(e => e.reportId !== params.data.reportId)
                                     this.setState(prevState => ({
                                         rowData: data
@@ -139,7 +140,9 @@ class UsersList extends React.Component {
     }
 
     async componentDidMount() {
-        await axios.get("https://localhost:5000/api/Report/getall").then(response => {
+        await axios.get("https://localhost:5000/api/Report/getall", { 
+            withCredentials: true
+        }).then(response => {
             let rowData = response.data
             this.setState({ rowData })
         })

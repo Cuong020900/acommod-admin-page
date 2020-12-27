@@ -122,7 +122,11 @@ class UsersList extends React.Component {
                                 color="green"
                                 onClick={async () => {
                                     // gui request xac nhan duyet
-                                    await axios.post("https://localhost:5000/api/Comment/confirm?cmtId=" + params.data.commentId)
+                                    await axios.post("https://localhost:5000/api/Comment/confirm?cmtId=" + params.data.commentId, {
+                                        data: {cmtId: params.data.commentId},
+                                    }, {
+                                        withCredentials: true
+                                    })
                                     this.getData()
                                 }}
                             />
@@ -131,7 +135,10 @@ class UsersList extends React.Component {
                                 size={20}
                                 color="red"
                                 onClick={async () => {
-                                    await axios.post("https://localhost:5000/api/Comment/reject?cmtId=" + params.data.commentId)
+                                    await axios.delete("https://localhost:5000/api/Comment/delete?cmtId=" + params.data.commentId, { 
+                                        data: {cmtId: params.data.commentId},
+                                        withCredentials: true
+                                    })
                                     this.getData()
                                 }}
                             />
@@ -146,7 +153,7 @@ class UsersList extends React.Component {
         this.getData()
     }
     async getData () {
-        await axios.get("https://localhost:5000/api/Comment/getconfirm").then(response => {
+        await axios.get("https://localhost:5000/api/Comment/getconfirm", { withCredentials: true }).then(response => {
             let rowData = response.data
             this.setState({ rowData })
         })
