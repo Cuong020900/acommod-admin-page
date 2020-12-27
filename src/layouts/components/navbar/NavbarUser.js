@@ -46,7 +46,10 @@ const UserDropdown = props => {
       <DropdownItem
         tag="a"
         href="#"
-        onClick={e => {
+        onClick={async (e) => {
+          await axios.get("https://localhost:5000/api/Login/signout", {
+            withCredentials: true
+          })
           localStorage.removeItem('userName')
           history.push("/pages/login")
         }}

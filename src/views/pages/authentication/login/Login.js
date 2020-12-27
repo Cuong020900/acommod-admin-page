@@ -35,6 +35,19 @@ class Login extends React.Component {
     password: ""
   }
 
+  componentDidMount () {
+    let isLoggedIn = false
+            fetch("https://localhost:5000/api/Login/check", {
+                credentials: 'include'
+            }).then(e => e.json()).then(e => {
+                isLoggedIn = e.status
+                if (isLoggedIn) {
+                  localStorage.setItem('userName', e.userName)
+                  this.props.history.push("/")
+                }
+            })
+  }
+
   notifyWarning = () => toast.warning("Sai tên đăng nhập hoặc mật khẩu!")
 
   toggle = tab => {
