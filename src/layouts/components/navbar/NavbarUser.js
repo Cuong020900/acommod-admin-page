@@ -67,6 +67,10 @@ class NavbarUser extends React.PureComponent {
     axios.get("/api/main-search/data").then(({ data }) => {
       this.setState({ suggestions: data.searchResult })
     })
+    this.getData()
+  }
+
+  async getData () {
     axios.get("https://localhost:5000/api/Notification/getAll").then(({ data }) => {
       this.setState({ listNotifications: data.slice().reverse() });
     })
@@ -76,41 +80,6 @@ class NavbarUser extends React.PureComponent {
     this.setState({
       navbarSearch: !this.state.navbarSearch
     })
-  }
-
-  genNotify = (data) => {
-    return (
-      <div>
-        {data.map(function(d, idx){
-          return (
-            <Media key={idx} className="d-flex align-items-start">
-              <Media left href="#">
-                <Icon.PlusSquare
-                  className="font-medium-5 danger"
-                  size={21}
-                />
-              </Media>
-              <Media body>
-                <Media heading className="danger media-heading" tag="h6">
-                  {d.content}
-                </Media>
-                <p className="notification-text">
-                  {"Post ID: " + d.postId + " by " + d.userName}
-                </p>
-              </Media>
-              <small>
-                <time
-                  className="media-meta"
-                  dateTime="2015-06-11T18:29:20+08:00"
-                >
-                  { d.notifTime }
-                    </time>
-              </small>
-            </Media>
-          )
-        })}
-      </div>
-    )
   }
 
   render() {
@@ -271,19 +240,67 @@ class NavbarUser extends React.PureComponent {
                 wheelPropagation: false
               }}
             >
-                {this.state.listNotifications.map(function (d, idx) {
+                {this.state.listNotifications.map( (d, idx) => {
                   return (
                     <div key={idx} className="d-flex justify-content-between">
 
                       <Media className="d-flex align-items-start">
                         <Media left href="#">
-                          <Icon.DownloadCloud
-                            className="font-medium-5 success"
-                            size={21}
-                          />
+                          { function a() {
+                              switch (d.content) {
+                                case "POST_ACCEPTED": {
+                                  return (
+                                    <Icon.DollarSign
+                                      className="font-medium-5 success"
+                                      size={12}
+                                    />
+                                  )
+                                }
+                                case "POST_REJECTED": {
+                                  return (
+                                    <Icon.Delete
+                                      className="font-medium-5 danger"
+                                      size={12}
+                                    />
+                                  )
+                                }
+                                case "REQUEST": {
+                                  return (
+                                    <Icon.Activity
+                                      className="font-medium-5 warning"
+                                      size={12}
+                                    />
+                                  )
+                                }
+                                case "REQUEST_ACCEPTED": {
+                                  return (
+                                    <Icon.Circle
+                                      className="font-medium-5 success"
+                                      size={12}
+                                    />
+                                  )
+                                }
+                                case "REQUEST_REJECTED": {
+                                  return (
+                                    <Icon.ArrowDown
+                                      className="font-medium-5 danger"
+                                      size={12}
+                                    />
+                                  )
+                                }
+                                default: {
+                                  return (
+                                    <Icon.Delete
+                                      className="font-medium-5 danger"
+                                      size={12}
+                                    />
+                                  )
+                                }
+                              }
+                            }()}
                         </Media>
                         <Media body>
-                          <Media heading className="danger media-heading" tag="h6">
+                          <Media heading className="secondary media-heading" tag="h6">
                             { function a() {
                               switch (d.content) {
                                 case "POST_ACCEPTED": {
@@ -322,20 +339,33 @@ class NavbarUser extends React.PureComponent {
                             className="media-meta"
                             dateTime="2015-06-11T18:29:20+08:00"
                           >
-                            { function a(){
+                            {function a() {
                               let time = new Date(Date.parse(d.notifTime))
                               let now = new Date()
                               let diffMiliSec = Math.abs(now - time)
                               let diffMin = Math.ceil(diffMiliSec / (60 * 1000))
-                              let diffHours = Math.ceil(diffMiliSec / ( 3600 * 1000))
-                              let diffDays = Math.ceil(diffMiliSec / ( 86400 * 1000))
+                              let diffHours = Math.ceil(diffMiliSec / (3600 * 1000))
+                              let diffDays = Math.ceil(diffMiliSec / (86400 * 1000))
                               if (diffDays > 1) return diffDays + " ngày trước"
                               else if (diffHours > 1) return diffHours + " giờ trước"
                               else if (diffMin > 1) return diffMin + " phút trước"
                               else return "bây giờ"
-                            }() }
-                    </time>
+                            }()}
+                          </time>
                         </small>
+                        <Icon.Trash
+                          className="font-medium-5 danger ml-1"
+                          size={20}
+                          onClick={async () => {
+                            // request delete action
+                            await axios.delete("https://localhost:5000/api/Notification/delete?id=" + d.notifId, {
+                              id: d.notifId
+                            }, {
+                              withCredentials: true
+                            })
+                            this.getData()
+                          }}
+                        />
                       </Media>
                     </div>
                   )
