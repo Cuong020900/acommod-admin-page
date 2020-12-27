@@ -22,7 +22,9 @@ const UserDropdown = props => {
     <DropdownMenu right>
       <DropdownItem tag="a" href="#">
         <Icon.User size={14} className="mr-50" />
-        <span className="align-middle">Edit Profile</span>
+        <span className="align-middle" onClick={() => {
+          history.push("/app/user/view?id=" + localStorage.getItem("userId"))
+        }}>Edit Profile</span>
       </DropdownItem>
       <DropdownItem tag="a" href="#">
         <Icon.Mail size={14} className="mr-50" />

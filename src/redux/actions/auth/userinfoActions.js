@@ -11,6 +11,7 @@ export const getUserInfo = (data) => {
         }).then(e => e.json()).then(e => {
             dispatch({ type: "LOGIN", payload: e })
             localStorage.setItem('userName', e.userName)
+            localStorage.setItem('userId', e.id)
         })
     }
 }
@@ -19,5 +20,6 @@ export const setUserInfo = (data) => {
     return dispatch => {
         dispatch({ type: "LOGIN", payload: data })
         localStorage.setItem('userName', data.userName)
+        localStorage.setItem('userId', data.id)
     }
 }
