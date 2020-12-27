@@ -382,17 +382,17 @@ class UsersList extends React.Component {
                             },
                             () =>
                               this.filterData(
-                                "roles",
+                                "role",
                                 this.state.role.toLowerCase()
                               )
                           )
                         }}
                       >
                         <option value="All">All</option>
-                        <option value="User">Người dùng</option>
-                        <option value="Mod">Quản trị viên</option>
-                        <option value="Owner">Chủ trọ</option>
-                        <option value="Admin">Admin</option>
+                        <option value="RENTER">Người dùng</option>
+                        <option value="MODERATOR">Quản trị viên</option>
+                        <option value="OWNER">Chủ trọ</option>
+                        <option value="ADMIN">Admin</option>
                       </Input>
                     </FormGroup>
                   </Col>
